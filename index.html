@@ -256,7 +256,7 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
       <div class="row" style="margin-bottom:10px">
         <button class="btn" id="btnRolar5" onclick="rolarCinco()">🎲 Rolar 5 cartas aleatórias</button>
       </div>
-      <div class="hint">Personagens 100% aleatórios, vindos da base pública AniList. Você pode guardar até 2 das 5 cartas roladas na sua coleção.</div>
+      <div class="hint">Personagens 100% aleatórios, vindos da base pública AniList. Você pode guardar até 2 das 5 cartas roladas na sua coleção.<br>Cartas de alto valor (Super Rara pra cima) saem em condições variadas — Nova, Pouco Usada, Usada, Desgastada ou Muito Desgastada — igual skins de CS: a mesma carta pode valer bem menos dependendo do desgaste.</div>
     </div>
 
     <div class="box">
@@ -461,7 +461,7 @@ function getStats(id,tier){
   };
 }
 
-/* ===== Sistema de desgaste (só cartas de alto valor, tier>=4) ===== */
+/* ===== Sistema de desgaste (só cartas de alto valor, tier>=4) — igual skins do CS ===== */
 const DESGASTES=[
   {id:'novo',nome:'Nova',mult:1,peso:8},
   {id:'pouco_usado',nome:'Pouco Usada',mult:.88,peso:22},
@@ -492,6 +492,7 @@ function normalizarCarta(raw){
   };
   const valor=Math.round(raridade.tier*40*desgaste.mult);
   const anime=raw._animeTitle||(raw.media&&raw.media.nodes[0]&&raw.media.nodes[0].title.romaji)||'Desconhecido';
+  // idVariante identifica a combinação personagem+desgaste — é o que torna cada "skin" um item distinto na coleção
   const idVariante=temDesgaste?`${raw.id}_${desgaste.id}`:String(raw.id);
   return{
     id:raw.id,
@@ -531,7 +532,8 @@ async function salvarColecao(col){
 }
 async function adicionarCarta(carta){
   const col=await getColecao();
-  const key=String(carta.id);
+  // chave = idVariante, não id: assim a mesma carta com desgaste diferente vira uma entrada separada na coleção
+  const key=carta.idVariante;
   const jaTinha=!!col[key];
   if(!col[key])col[key]={...carta,vezes:0};
   col[key].vezes++;
@@ -545,23 +547,27 @@ function mudarAba(nome){
   document.querySelectorAll('main .panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+nome));
   if(nome==='colecao')renderColecao();
   if(nome==='loja')renderLoja();
+  if(nome==='bot')renderColecaoBot();
 }
 
 function cardHTML(carta,{selecionavel=false,selecionada=false,mostrarQtd=false}={}){
   const glow=carta.raridade.classe==='lendaria'?' rarity-glow-lendaria':'';
+  const wearBadge=carta.temDesgaste?`<span class="wear-badge wear-${carta.desgaste.id}">${carta.desgaste.nome}</span>`:'';
+  const valueLine=carta.temDesgaste?`<div class="value-line">💎 Valor: ${carta.valor}</div>`:'';
   return `
-    <div class="card ${selecionavel?'selectable':''} ${selecionada?'selected':''}${glow}" data-id="${carta.id}">
+    <div class="card ${selecionavel?'selectable':''} ${selecionada?'selected':''}${glow}" data-id="${carta.idVariante}">
       ${mostrarQtd&&carta.vezes?`<div class="qty">x${carta.vezes}</div>`:''}
       <div class="thumb"><img src="${carta.imagem}" alt="${carta.nome}" loading="lazy"></div>
       <div class="info">
         <div class="nome">${carta.nome}</div>
         <div class="anime">${carta.anime}</div>
-        <span class="rarity-badge rarity-${carta.raridade.classe}">${carta.raridade.nome}</span>
+        <span class="rarity-badge rarity-${carta.raridade.classe}">${carta.raridade.nome}</span>${wearBadge}
         <div class="stats">
           <span>❤️ ${carta.stats.hp}</span>
           <span>⚔️ ${carta.stats.atk}</span>
           <span>🛡️ ${carta.stats.def}</span>
         </div>
+        ${valueLine}
       </div>
     </div>`;
 }
@@ -636,7 +642,7 @@ async function rolarCinco(){
 
 function renderRollArea(){
   const area=document.getElementById('rollArea');
-  const grid=cartasRoladas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartasEscolhidasRoll.some(x=>x.id===c.id)})).join('');
+  const grid=cartasRoladas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartasEscolhidasRoll.some(x=>x.idVariante===c.idVariante)})).join('');
   area.innerHTML=`
     <div class="grid">${grid}</div>
     <div class="status-line">Selecionadas: ${cartasEscolhidasRoll.length}/2</div>
@@ -645,9 +651,9 @@ function renderRollArea(){
     </div>`;
   area.querySelectorAll('.card').forEach(el=>{
     el.addEventListener('click',()=>{
-      const id=parseInt(el.dataset.id,10);
-      const carta=cartasRoladas.find(c=>c.id===id);
-      const idx=cartasEscolhidasRoll.findIndex(c=>c.id===id);
+      const idVariante=el.dataset.id;
+      const carta=cartasRoladas.find(c=>c.idVariante===idVariante);
+      const idx=cartasEscolhidasRoll.findIndex(c=>c.idVariante===idVariante);
       if(idx>=0){
         cartasEscolhidasRoll.splice(idx,1);
       }else if(cartasEscolhidasRoll.length<2){
@@ -660,11 +666,18 @@ function renderRollArea(){
 
 async function confirmarEscolhaRoll(){
   if(!cartasEscolhidasRoll.length)return;
+  const colAntes=await getColecao();
+  const mensagens=[];
   for(const c of cartasEscolhidasRoll){
+    const jaTinhaOutraVariante=Object.values(colAntes).some(x=>x.id===c.id&&x.idVariante!==c.idVariante);
+    const jaTinhaEssaVarianteExata=!!colAntes[c.idVariante];
     await adicionarCarta(c);
+    if(!jaTinhaEssaVarianteExata&&jaTinhaOutraVariante){
+      mensagens.push(`✨ Nova variante de ${c.nome}: ${c.desgaste.nome} (valor ${c.valor})`);
+    }
   }
   const area=document.getElementById('rollArea');
-  area.innerHTML=`<div class="empty-state"><span>🎉</span>${cartasEscolhidasRoll.length} carta(s) guardada(s) na coleção! Role de novo quando quiser.</div>`;
+  area.innerHTML=`<div class="empty-state"><span>🎉</span>${cartasEscolhidasRoll.length} carta(s) guardada(s) na coleção!${mensagens.length?'<br><br>'+mensagens.join('<br>'):''}<br><br>Role de novo quando quiser.</div>`;
   cartasRoladas=[];cartasEscolhidasRoll=[];
 }
 
@@ -744,28 +757,62 @@ async function comprarPacote(id){
   }
 }
 
-/* ================= COLEÇÃO ================= */
+/* ================= COLEÇÃO (aba Coleção, com filtro de raridade) ================= */
 let cartaSelecionadaBot=null;
+let filtroColecaoAtual='todas';
+
+const FILTROS_RARIDADE=[
+  {id:'todas',nome:'Todas'},
+  {id:'comum',nome:'Comum'},
+  {id:'incomum',nome:'Incomum'},
+  {id:'rara',nome:'Rara'},
+  {id:'superrara',nome:'Super Rara'},
+  {id:'epica',nome:'Épica'},
+  {id:'mitica',nome:'Mítica'},
+  {id:'lendaria',nome:'Lendária'}
+];
+
+function renderFiltroColecao(){
+  const el=document.getElementById('colecaoFiltro');
+  el.innerHTML=FILTROS_RARIDADE.map(f=>`<button class="filtro-chip ${filtroColecaoAtual===f.id?'active':''}" data-filtro="${f.id}">${f.nome}</button>`).join('');
+  el.querySelectorAll('.filtro-chip').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      filtroColecaoAtual=btn.dataset.filtro;
+      renderColecao();
+    });
+  });
+}
 
 async function renderColecao(){
   const col=await getColecao();
   const grid=document.getElementById('colecaoGrid');
   const stats=document.getElementById('colecaoStats');
-  const cartas=Object.values(col).sort((a,b)=>b.raridade.tier-a.raridade.tier||b.favoritos-a.favoritos);
+  renderFiltroColecao();
 
-  if(!cartas.length){
+  const todasCartas=Object.values(col).sort((a,b)=>b.raridade.tier-a.raridade.tier||b.valor-a.valor||b.favoritos-a.favoritos);
+
+  if(!todasCartas.length){
     grid.innerHTML='';
     stats.innerHTML='<div class="empty-state"><span>🎴</span>Sua coleção está vazia. Vá na aba Rolar pra puxar sua primeira carta!</div>';
     return;
   }
-  const totalRolls=cartas.reduce((s,c)=>s+c.vezes,0);
-  stats.innerText=`${cartas.length} personagens diferentes • ${totalRolls} cartas roladas no total`;
-  grid.innerHTML=cartas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartaSelecionadaBot&&cartaSelecionadaBot.id===c.id,mostrarQtd:true})).join('');
+
+  const totalRolls=todasCartas.reduce((s,c)=>s+c.vezes,0);
+  const cartas=filtroColecaoAtual==='todas'?todasCartas:todasCartas.filter(c=>c.raridade.classe===filtroColecaoAtual);
+
+  stats.innerText=`${todasCartas.length} variante(s) na coleção • ${totalRolls} cartas roladas no total`+(filtroColecaoAtual!=='todas'?` • mostrando ${cartas.length} em ${FILTROS_RARIDADE.find(f=>f.id===filtroColecaoAtual).nome}`:'');
+
+  if(!cartas.length){
+    grid.innerHTML='<div class="empty-state"><span>🔍</span>Nenhuma carta dessa raridade ainda.</div>';
+    return;
+  }
+
+  grid.innerHTML=cartas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartaSelecionadaBot&&cartaSelecionadaBot.idVariante===c.idVariante,mostrarQtd:true})).join('');
 
   grid.querySelectorAll('.card').forEach(el=>{
     el.addEventListener('click',()=>{
-      const id=el.dataset.id;
-      cartaSelecionadaBot=col[id];
+      const idVariante=el.dataset.id;
+      cartaSelecionadaBot=col[idVariante];
       renderColecao();
       atualizarPainelSelecaoBot();
     });
@@ -776,12 +823,39 @@ function atualizarPainelSelecaoBot(){
   const panel=document.getElementById('botSelecaoPanel');
   const btn=document.getElementById('btnDuelarBot');
   if(!cartaSelecionadaBot){
-    panel.innerHTML='<span class="empty">Nenhuma carta selecionada — vá na aba Coleção e toque numa carta</span>';
+    panel.innerHTML='<span class="empty">Nenhuma carta selecionada — toque numa carta abaixo</span>';
     btn.disabled=true;
     return;
   }
-  panel.innerHTML=`<img src="${cartaSelecionadaBot.imagem}"><div><div style="font-family:var(--font-display);font-weight:600">${cartaSelecionadaBot.nome}</div><div class="hint" style="margin-top:2px">❤️${cartaSelecionadaBot.stats.hp} ⚔️${cartaSelecionadaBot.stats.atk} 🛡️${cartaSelecionadaBot.stats.def}</div></div>`;
+  const wearBadge=cartaSelecionadaBot.temDesgaste?` <span class="wear-badge wear-${cartaSelecionadaBot.desgaste.id}">${cartaSelecionadaBot.desgaste.nome}</span>`:'';
+  panel.innerHTML=`<img src="${cartaSelecionadaBot.imagem}"><div><div style="font-family:var(--font-display);font-weight:600">${cartaSelecionadaBot.nome}${wearBadge}</div><div class="hint" style="margin-top:2px">❤️${cartaSelecionadaBot.stats.hp} ⚔️${cartaSelecionadaBot.stats.atk} 🛡️${cartaSelecionadaBot.stats.def}</div></div>`;
   btn.disabled=false;
+}
+
+/* ================= COLEÇÃO NA ABA DUELO VS BOT (correção do bug de seleção) ================= */
+async function renderColecaoBot(){
+  const col=await getColecao();
+  const grid=document.getElementById('botColecaoGrid');
+  const cartas=Object.values(col).sort((a,b)=>b.raridade.tier-a.raridade.tier||b.valor-a.valor||b.favoritos-a.favoritos);
+
+  if(!cartas.length){
+    grid.innerHTML='<div class="empty-state"><span>🎴</span>Você ainda não tem cartas. Vá na aba Rolar primeiro!</div>';
+    atualizarPainelSelecaoBot();
+    return;
+  }
+
+  grid.innerHTML=cartas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartaSelecionadaBot&&cartaSelecionadaBot.idVariante===c.idVariante,mostrarQtd:true})).join('');
+
+  grid.querySelectorAll('.card').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const idVariante=el.dataset.id;
+      cartaSelecionadaBot=col[idVariante];
+      renderColecaoBot();
+      atualizarPainelSelecaoBot();
+    });
+  });
+
+  atualizarPainelSelecaoBot();
 }
 
 /* ================= DUELO VS BOT ================= */
@@ -807,9 +881,9 @@ async function iniciarDueloBot(){
   const b={...cartaBot,hpAtual:cartaBot.stats.hp};
 
   document.getElementById('botImgP').src=p.imagem;
-  document.getElementById('botNomeP').innerText=p.nome;
+  document.getElementById('botNomeP').innerText=p.nome+(p.temDesgaste?` (${p.desgaste.nome})`:'');
   document.getElementById('botImgB').src=b.imagem;
-  document.getElementById('botNomeB').innerText=b.nome;
+  document.getElementById('botNomeB').innerText=b.nome+(b.temDesgaste?` (${b.desgaste.nome})`:'');
   atualizarBarraHp('botHpBarP','botHpTextP',p.hpAtual,p.stats.hp);
   atualizarBarraHp('botHpBarB','botHpTextB',b.hpAtual,b.stats.hp);
 
@@ -1020,18 +1094,18 @@ async function renderEstadoOnline(){
 async function renderColecaoOnline(){
   const col=await getColecao();
   const grid=document.getElementById('onlineColecaoGrid');
-  const cartas=Object.values(col).sort((a,b)=>b.raridade.tier-a.raridade.tier);
+  const cartas=Object.values(col).sort((a,b)=>b.raridade.tier-a.raridade.tier||b.valor-a.valor);
   if(!cartas.length){
     grid.innerHTML='<div class="empty-state"><span>🎴</span>Você ainda não tem cartas. Vá na aba Rolar primeiro!</div>';
     return;
   }
   const meuLado=salaAtual[meuPapel];
-  grid.innerHTML=cartas.map(c=>cardHTML(c,{selecionavel:!meuLado.pronto,selecionada:cartaSelecionadaOnline&&cartaSelecionadaOnline.id===c.id})).join('');
+  grid.innerHTML=cartas.map(c=>cardHTML(c,{selecionavel:!meuLado.pronto,selecionada:cartaSelecionadaOnline&&cartaSelecionadaOnline.idVariante===c.idVariante})).join('');
   if(meuLado.pronto)return;
   grid.querySelectorAll('.card').forEach(el=>{
     el.addEventListener('click',()=>{
-      const id=el.dataset.id;
-      cartaSelecionadaOnline=col[id];
+      const idVariante=el.dataset.id;
+      cartaSelecionadaOnline=col[idVariante];
       renderColecaoOnline();
       atualizarPainelSelecaoOnline();
     });
