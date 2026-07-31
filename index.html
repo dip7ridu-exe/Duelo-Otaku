@@ -25,7 +25,9 @@
   --c-comum:#8d8d96;
   --c-incomum:#6fbf73;
   --c-rara:#5b9bd5;
+  --c-superrara:#4fd1c5;
   --c-epica:#b47edc;
+  --c-mitica:#e05a8a;
   --c-lendaria:#d4a857;
 }
 *{margin:0;padding:0;box-sizing:border-box}
@@ -126,8 +128,19 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
 .rarity-comum{background:rgba(141,141,150,.15);color:var(--c-comum);border:1px solid rgba(141,141,150,.3)}
 .rarity-incomum{background:rgba(111,191,115,.15);color:var(--c-incomum);border:1px solid rgba(111,191,115,.3)}
 .rarity-rara{background:rgba(91,155,213,.15);color:var(--c-rara);border:1px solid rgba(91,155,213,.3)}
+.rarity-superrara{background:rgba(79,209,197,.15);color:var(--c-superrara);border:1px solid rgba(79,209,197,.3)}
 .rarity-epica{background:rgba(180,126,220,.15);color:var(--c-epica);border:1px solid rgba(180,126,220,.3)}
+.rarity-mitica{background:rgba(224,90,138,.15);color:var(--c-mitica);border:1px solid rgba(224,90,138,.3)}
 .rarity-lendaria{background:linear-gradient(90deg,rgba(212,168,87,.2),rgba(245,215,142,.2));color:var(--accent);border:1px solid rgba(212,168,87,.4)}
+
+.coin-badge{
+  display:inline-flex;align-items:center;gap:6px;margin-top:10px;
+  padding:6px 14px;border-radius:20px;background:var(--surface-2);
+  border:1px solid var(--accent);color:var(--accent);
+  font-family:var(--font-mono);font-size:13px;font-weight:600;
+}
+.pacote-card{width:230px;text-align:left}
+.pacote-card h2{font-size:16px}
 
 .card.rarity-glow-lendaria{animation:glowGold 1.8s ease-in-out infinite}
 @keyframes glowGold{
@@ -204,9 +217,11 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
 <header>
   <h1>Duelo Otaku</h1>
   <p>Role, colecione e duele com personagens de anime</p>
+  <div class="coin-badge" id="coinBadge">💰 0 moedas</div>
   <nav class="tabs">
     <button class="active" data-tab="rolar" onclick="mudarAba('rolar')">🎴 Rolar</button>
     <button data-tab="colecao" onclick="mudarAba('colecao')">🗂️ Coleção</button>
+    <button data-tab="loja" onclick="mudarAba('loja')">🛒 Loja</button>
     <button data-tab="bot" onclick="mudarAba('bot')">🤖 Duelo vs Bot</button>
     <button data-tab="online" onclick="mudarAba('online')">🌐 Duelo Online</button>
   </nav>
@@ -217,23 +232,16 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
   <!-- ===== ROLAR ===== -->
   <section class="panel active" id="panel-rolar">
     <div class="box">
-      <h2>Rolar uma carta</h2>
-      <div class="row" style="margin-bottom:16px">
-        <button class="btn" id="btnRolarGeral" onclick="rolarGeral()">🎲 Rolar personagem aleatório</button>
+      <h2>Rolar cartas</h2>
+      <div class="row" style="margin-bottom:10px">
+        <button class="btn" id="btnRolar5" onclick="rolarCinco()">🎲 Rolar 5 cartas aleatórias</button>
       </div>
-      <div class="row">
-        <input type="text" id="inputAnime" placeholder="Nome de um anime (ex: Naruto, Jujutsu Kaisen)">
-        <button class="btn secondary" id="btnRolarAnime" onclick="rolarDeAnime()">🔎 Rolar desse anime</button>
-      </div>
-      <div class="hint">As cartas vêm da base pública AniList. Raridade e status (HP / ATK / DEF) são calculados a partir da popularidade do personagem.</div>
+      <div class="hint">Personagens 100% aleatórios, vindos da base pública AniList. Você pode guardar até 2 das 5 cartas roladas na sua coleção.</div>
     </div>
 
     <div class="box">
-      <div class="roll-stage">
-        <div id="rollResultado">
-          <div class="roll-placeholder">Clique em "Rolar" para puxar sua primeira carta</div>
-        </div>
-        <div class="roll-msg" id="rollMsg"></div>
+      <div id="rollArea">
+        <div class="empty-state"><span>🎴</span>Clique em "Rolar 5 cartas" pra começar</div>
       </div>
     </div>
   </section>
@@ -244,6 +252,16 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
       <h2>Minha coleção</h2>
       <div id="colecaoStats" class="hint" style="margin-bottom:14px"></div>
       <div class="grid" id="colecaoGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== LOJA ===== -->
+  <section class="panel" id="panel-loja">
+    <div class="box">
+      <h2>Loja de cartas</h2>
+      <div class="hint" style="margin-bottom:14px">Troque moedas por pacotes com raridade garantida. Moedas são ganhas vencendo duelos online — quanto mais esmagadora a vitória, mais moedas.</div>
+      <div class="grid" id="lojaGrid"></div>
+      <div id="lojaResultado" style="margin-top:18px"></div>
     </div>
   </section>
 
@@ -364,46 +382,60 @@ const Q_RANDOM=`query($page:Int){
   }
 }`;
 
-const Q_SEARCH=`query($search:String){
-  Media(search:$search, type:ANIME){
-    title{romaji}
-    characters(sort:FAVOURITES_DESC, perPage:20){
-      nodes{ id name{full native} image{large} favourites }
-    }
-  }
-}`;
-
 async function buscarPersonagemAleatorio(){
-  const page=Math.floor(Math.random()*100)+1;
+  const page=Math.floor(Math.random()*400)+1;
   const data=await anilistQuery(Q_RANDOM,{page});
   const chars=(data.Page&&data.Page.characters)||[];
   if(!chars.length)throw new Error('Nenhum personagem encontrado, tente de novo.');
   return chars[Math.floor(Math.random()*chars.length)];
 }
 
-async function buscarPersonagemDeAnime(nome){
-  const data=await anilistQuery(Q_SEARCH,{search:nome});
-  if(!data.Media)throw new Error('Anime não encontrado.');
-  const chars=(data.Media.characters&&data.Media.characters.nodes)||[];
-  if(!chars.length)throw new Error('Esse anime não tem personagens cadastrados.');
-  const escolhido=chars[Math.floor(Math.random()*chars.length)];
-  escolhido._animeTitle=data.Media.title.romaji;
-  return escolhido;
+async function buscarCincoAleatorios(){
+  const resultados=[];
+  const idsVistos=new Set();
+  let tentativas=0;
+  while(resultados.length<5&&tentativas<20){
+    tentativas++;
+    try{
+      const raw=await buscarPersonagemAleatorio();
+      if(!idsVistos.has(raw.id)){
+        idsVistos.add(raw.id);
+        resultados.push(raw);
+      }
+    }catch(e){}
+  }
+  return resultados;
+}
+
+async function rolarComGarantia(minTier,maxTentativas=15){
+  let melhor=null;
+  for(let i=0;i<maxTentativas;i++){
+    try{
+      const raw=await buscarPersonagemAleatorio();
+      const carta=normalizarCarta(raw);
+      if(!melhor||carta.raridade.tier>melhor.raridade.tier)melhor=carta;
+      if(carta.raridade.tier>=minTier)return carta;
+    }catch(e){}
+  }
+  if(!melhor)throw new Error('Não foi possível abrir o pacote agora, tente de novo.');
+  return melhor;
 }
 
 function getRaridade(fav){
-  if(fav>=20000)return{tier:5,nome:'Lendária',classe:'lendaria'};
-  if(fav>=5000)return{tier:4,nome:'Épica',classe:'epica'};
-  if(fav>=1000)return{tier:3,nome:'Rara',classe:'rara'};
-  if(fav>=200)return{tier:2,nome:'Incomum',classe:'incomum'};
+  if(fav>=20000)return{tier:7,nome:'Lendária',classe:'lendaria'};
+  if(fav>=8000)return{tier:6,nome:'Mítica',classe:'mitica'};
+  if(fav>=3000)return{tier:5,nome:'Épica',classe:'epica'};
+  if(fav>=1000)return{tier:4,nome:'Super Rara',classe:'superrara'};
+  if(fav>=400)return{tier:3,nome:'Rara',classe:'rara'};
+  if(fav>=100)return{tier:2,nome:'Incomum',classe:'incomum'};
   return{tier:1,nome:'Comum',classe:'comum'};
 }
 function getStats(id,tier){
   const seed=id%97;
   return{
-    hp:70+tier*28+(seed%22),
-    atk:12+tier*7+(seed%9),
-    def:6+tier*5+(seed%7)
+    hp:55+tier*20+(seed%18),
+    atk:9+tier*5+(seed%8),
+    def:4+tier*4+(seed%6)
   };
 }
 function normalizarCarta(raw){
@@ -423,14 +455,25 @@ function normalizarCarta(raw){
 }
 
 /* ================= COLEÇÃO (storage pessoal) ================= */
-async function getColecao(){
+let colecaoCache=null;
+
+async function getColecao(forcarLeitura){
+  if(colecaoCache&&!forcarLeitura)return colecaoCache;
   try{
     const r=await window.storage.get('colecao-cartas',false);
-    return r?JSON.parse(r.value):{};
-  }catch(e){return{};}
+    colecaoCache=r?JSON.parse(r.value):{};
+  }catch(e){
+    colecaoCache=colecaoCache||{};
+  }
+  return colecaoCache;
 }
 async function salvarColecao(col){
-  try{await window.storage.set('colecao-cartas',JSON.stringify(col),false);}catch(e){}
+  colecaoCache=col;
+  try{
+    await window.storage.set('colecao-cartas',JSON.stringify(col),false);
+  }catch(e){
+    console.error('Erro ao salvar coleção:',e);
+  }
 }
 async function adicionarCarta(carta){
   const col=await getColecao();
@@ -447,6 +490,7 @@ function mudarAba(nome){
   document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.toggle('active',b.dataset.tab===nome));
   document.querySelectorAll('main .panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+nome));
   if(nome==='colecao')renderColecao();
+  if(nome==='loja')renderLoja();
 }
 
 function cardHTML(carta,{selecionavel=false,selecionada=false,mostrarQtd=false}={}){
@@ -508,47 +552,142 @@ function launchConfetti(){
   animate();
 }
 
-/* ================= ROLAR ================= */
+/* ================= ROLAR (5 cartas, escolhe até 2) ================= */
 let rolando=false;
+let cartasRoladas=[];
+let cartasEscolhidasRoll=[];
 
-async function processarRoll(promiseFn){
+async function rolarCinco(){
   if(rolando)return;
   rolando=true;
-  const btnG=document.getElementById('btnRolarGeral');
-  const btnA=document.getElementById('btnRolarAnime');
-  const resultado=document.getElementById('rollResultado');
-  const msg=document.getElementById('rollMsg');
-  btnG.disabled=true;btnA.disabled=true;
-  resultado.innerHTML='<div class="roll-placeholder"><span class="spinner"></span>Rolando...</div>';
-  msg.innerText='';msg.className='roll-msg';
+  const btn=document.getElementById('btnRolar5');
+  btn.disabled=true;
+  const area=document.getElementById('rollArea');
+  area.innerHTML='<div class="empty-state"><span class="spinner"></span>Rolando 5 cartas...</div>';
+  cartasEscolhidasRoll=[];
 
   try{
-    const raw=await promiseFn();
-    const carta=normalizarCarta(raw);
-    await preloadImage(carta.imagem).catch(()=>{});
-    resultado.innerHTML=`<div class="reveal-flash">${cardHTML(carta)}</div>`;
-    const {jaTinha}=await adicionarCarta(carta);
-    msg.innerText=jaTinha?`Você já tinha ${carta.nome} — carta duplicada guardada!`:`Nova carta! ${carta.nome} entrou na sua coleção.`;
-    msg.className='roll-msg'+(jaTinha?'':' novo');
-    if(carta.raridade.tier>=4){
-      setTimeout(()=>launchConfetti(),150);
-    }
+    const raws=await buscarCincoAleatorios();
+    if(!raws.length)throw new Error('Não foi possível buscar personagens agora.');
+    cartasRoladas=raws.map(normalizarCarta);
+    await Promise.all(cartasRoladas.map(c=>preloadImage(c.imagem).catch(()=>{})));
+    renderRollArea();
+    if(cartasRoladas.some(c=>c.raridade.tier>=6))setTimeout(()=>launchConfetti(),150);
   }catch(e){
-    resultado.innerHTML=`<div class="roll-placeholder">😕 ${e.message||'Erro ao buscar personagem'}</div>`;
+    area.innerHTML=`<div class="empty-state"><span>😕</span>${e.message||'Erro ao buscar personagens'}</div>`;
   }finally{
-    btnG.disabled=false;btnA.disabled=false;rolando=false;
+    btn.disabled=false;rolando=false;
   }
 }
 
-function rolarGeral(){processarRoll(()=>buscarPersonagemAleatorio());}
-function rolarDeAnime(){
-  const nome=document.getElementById('inputAnime').value.trim();
-  if(!nome){
-    const msg=document.getElementById('rollMsg');
-    msg.innerText='Digite o nome de um anime primeiro.';
-    return;
+function renderRollArea(){
+  const area=document.getElementById('rollArea');
+  const grid=cartasRoladas.map(c=>cardHTML(c,{selecionavel:true,selecionada:cartasEscolhidasRoll.some(x=>x.id===c.id)})).join('');
+  area.innerHTML=`
+    <div class="grid">${grid}</div>
+    <div class="status-line">Selecionadas: ${cartasEscolhidasRoll.length}/2</div>
+    <div class="row" style="justify-content:center;margin-top:12px">
+      <button class="btn" id="btnConfirmarEscolha" onclick="confirmarEscolhaRoll()" ${cartasEscolhidasRoll.length===0?'disabled':''}>✅ Guardar escolhidas na coleção</button>
+    </div>`;
+  area.querySelectorAll('.card').forEach(el=>{
+    el.addEventListener('click',()=>{
+      const id=parseInt(el.dataset.id,10);
+      const carta=cartasRoladas.find(c=>c.id===id);
+      const idx=cartasEscolhidasRoll.findIndex(c=>c.id===id);
+      if(idx>=0){
+        cartasEscolhidasRoll.splice(idx,1);
+      }else if(cartasEscolhidasRoll.length<2){
+        cartasEscolhidasRoll.push(carta);
+      }
+      renderRollArea();
+    });
+  });
+}
+
+async function confirmarEscolhaRoll(){
+  if(!cartasEscolhidasRoll.length)return;
+  for(const c of cartasEscolhidasRoll){
+    await adicionarCarta(c);
   }
-  processarRoll(()=>buscarPersonagemDeAnime(nome));
+  const area=document.getElementById('rollArea');
+  area.innerHTML=`<div class="empty-state"><span>🎉</span>${cartasEscolhidasRoll.length} carta(s) guardada(s) na coleção! Role de novo quando quiser.</div>`;
+  cartasRoladas=[];cartasEscolhidasRoll=[];
+}
+
+/* ================= MOEDAS ================= */
+let moedasCache=null;
+
+async function getMoedas(forcarLeitura){
+  if(moedasCache!==null&&!forcarLeitura)return moedasCache;
+  try{
+    const r=await window.storage.get('moedas-jogador',false);
+    moedasCache=r?(parseInt(r.value,10)||0):0;
+  }catch(e){
+    moedasCache=moedasCache!==null?moedasCache:0;
+  }
+  return moedasCache;
+}
+async function setMoedas(v){
+  moedasCache=Math.max(0,v);
+  try{await window.storage.set('moedas-jogador',String(moedasCache),false);}catch(e){
+    console.error('Erro ao salvar moedas:',e);
+  }
+}
+async function addMoedas(delta){
+  const atual=await getMoedas();
+  const novo=Math.max(0,atual+delta);
+  await setMoedas(novo);
+  return novo;
+}
+async function atualizarMoedasUI(){
+  const m=await getMoedas();
+  document.getElementById('coinBadge').innerText=`💰 ${m} moedas`;
+}
+
+/* ================= LOJA ================= */
+const PACOTES=[
+  {id:'bronze',nome:'Pacote Bronze',preco:60,minTier:3,desc:'Garante uma carta Rara ou melhor'},
+  {id:'prata',nome:'Pacote Prata',preco:150,minTier:5,desc:'Garante uma carta Épica ou melhor'},
+  {id:'ouro',nome:'Pacote Ouro',preco:350,minTier:7,desc:'Garante uma carta Lendária'}
+];
+
+async function renderLoja(){
+  const moedas=await getMoedas();
+  const grid=document.getElementById('lojaGrid');
+  grid.innerHTML=PACOTES.map(p=>`
+    <div class="box pacote-card">
+      <h2>${p.nome}</h2>
+      <div class="hint" style="margin-bottom:12px">${p.desc}</div>
+      <div class="row" style="justify-content:space-between;align-items:center">
+        <span style="font-family:var(--font-mono);color:var(--accent)">💰 ${p.preco}</span>
+        <button class="btn secondary" data-pack="${p.id}" ${moedas<p.preco?'disabled':''}>Comprar</button>
+      </div>
+    </div>`).join('');
+  grid.querySelectorAll('button[data-pack]').forEach(btn=>{
+    btn.addEventListener('click',()=>comprarPacote(btn.dataset.pack));
+  });
+}
+
+async function comprarPacote(id){
+  const pacote=PACOTES.find(p=>p.id===id);
+  if(!pacote)return;
+  const moedas=await getMoedas();
+  if(moedas<pacote.preco)return;
+  await addMoedas(-pacote.preco);
+  await atualizarMoedasUI();
+  await renderLoja();
+  const resultado=document.getElementById('lojaResultado');
+  resultado.innerHTML='<div class="empty-state"><span class="spinner"></span>Abrindo pacote...</div>';
+  try{
+    const carta=await rolarComGarantia(pacote.minTier);
+    await adicionarCarta(carta);
+    resultado.innerHTML=`<div class="reveal-flash">${cardHTML(carta)}</div>`;
+  }catch(e){
+    resultado.innerHTML=`<div class="empty-state">😕 ${e.message||'Erro ao abrir o pacote'}</div>`;
+    await addMoedas(pacote.preco);
+    await atualizarMoedasUI();
+    await renderLoja();
+  }
 }
 
 /* ================= COLEÇÃO ================= */
@@ -934,6 +1073,15 @@ async function atacarOnline(){
     salaAtual.status='fim';
     salaAtual.vencedor=meuPapel;
     salaAtual.log.push(`${meuLado.carta.nome} venceu o duelo!`);
+
+    const pctRestante=meuLado.hpAtual/meuLado.carta.stats.hp;
+    let recompensa=10,texto='vitória por pouco';
+    if(pctRestante>=0.7){recompensa=60;texto='vitória esmagadora';}
+    else if(pctRestante>=0.4){recompensa=35;texto='vitória sólida';}
+    else if(pctRestante>=0.15){recompensa=20;texto='vitória apertada';}
+    await addMoedas(recompensa);
+    await atualizarMoedasUI();
+    salaAtual.log.push(`Recompensa da vitória: ${recompensa} moedas (${texto}).`);
   }else{
     salaAtual.turno=opPapel;
   }
@@ -943,6 +1091,7 @@ async function atacarOnline(){
 
 /* ================= INIT ================= */
 mudarAba('rolar');
+atualizarMoedasUI();
 </script>
 </body>
 </html>
