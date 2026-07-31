@@ -142,6 +142,26 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
 .pacote-card{width:230px;text-align:left}
 .pacote-card h2{font-size:16px}
 
+.filtro-chip{
+  padding:6px 14px;border-radius:20px;border:1px solid var(--border);
+  background:var(--surface-2);color:var(--text-muted);font-family:var(--font-mono);
+  font-size:11px;cursor:pointer;transition:.15s;
+}
+.filtro-chip.active{border-color:var(--accent);color:var(--accent)}
+.filtro-chip:hover{color:var(--text)}
+
+.wear-badge{
+  display:inline-block;margin-left:5px;padding:2px 7px;border-radius:6px;
+  font-family:var(--font-mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.03em;
+  border:1px solid var(--border);background:var(--surface);
+}
+.wear-novo{color:#6fbf73;border-color:rgba(111,191,115,.4)}
+.wear-pouco_usado{color:#a4d97a;border-color:rgba(164,217,122,.4)}
+.wear-usado{color:#e0c25c;border-color:rgba(224,194,92,.4)}
+.wear-desgastado{color:#e0a35c;border-color:rgba(224,163,92,.4)}
+.wear-muito_desgastado{color:#c96b4a;border-color:rgba(201,107,74,.4)}
+.value-line{font-family:var(--font-mono);font-size:9.5px;color:var(--accent);margin-top:5px}
+
 .card.rarity-glow-lendaria{animation:glowGold 1.8s ease-in-out infinite}
 @keyframes glowGold{
   0%,100%{box-shadow:0 0 6px rgba(212,168,87,.25)}
@@ -250,6 +270,7 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
   <section class="panel" id="panel-colecao">
     <div class="box">
       <h2>Minha coleção</h2>
+      <div class="row" id="colecaoFiltro" style="margin-bottom:14px"></div>
       <div id="colecaoStats" class="hint" style="margin-bottom:14px"></div>
       <div class="grid" id="colecaoGrid"></div>
     </div>
@@ -269,11 +290,12 @@ input[type=text]:focus{outline:none;border-color:var(--accent)}
   <section class="panel" id="panel-bot">
     <div class="box">
       <h2>Escolha sua carta</h2>
-      <div class="hint" style="margin-bottom:10px">Toque numa carta da sua coleção para levar pro duelo.</div>
-      <div class="selected-panel" id="botSelecaoPanel"><span class="empty">Nenhuma carta selecionada — vá na aba Coleção e toque numa carta</span></div>
+      <div class="hint" style="margin-bottom:10px">Toque numa carta abaixo pra levar pro duelo.</div>
+      <div class="selected-panel" id="botSelecaoPanel"><span class="empty">Nenhuma carta selecionada</span></div>
       <div class="row" style="margin-top:14px">
         <button class="btn" id="btnDuelarBot" onclick="iniciarDueloBot()" disabled>⚔️ Duelar contra o bot</button>
       </div>
+      <div class="grid" id="botColecaoGrid" style="margin-top:18px"></div>
     </div>
 
     <div class="box" id="botArenaBox" style="display:none">
@@ -438,18 +460,50 @@ function getStats(id,tier){
     def:4+tier*4+(seed%6)
   };
 }
+
+/* ===== Sistema de desgaste (só cartas de alto valor, tier>=4) ===== */
+const DESGASTES=[
+  {id:'novo',nome:'Nova',mult:1,peso:8},
+  {id:'pouco_usado',nome:'Pouco Usada',mult:.88,peso:22},
+  {id:'usado',nome:'Usada',mult:.75,peso:35},
+  {id:'desgastado',nome:'Desgastada',mult:.62,peso:25},
+  {id:'muito_desgastado',nome:'Muito Desgastada',mult:.48,peso:10}
+];
+function sortearDesgaste(){
+  const total=DESGASTES.reduce((s,d)=>s+d.peso,0);
+  let r=Math.random()*total;
+  for(const d of DESGASTES){
+    if(r<d.peso)return d;
+    r-=d.peso;
+  }
+  return DESGASTES[0];
+}
+
 function normalizarCarta(raw){
   const fav=raw.favourites||0;
   const raridade=getRaridade(fav);
-  const stats=getStats(raw.id,raridade.tier);
+  const statsBase=getStats(raw.id,raridade.tier);
+  const temDesgaste=raridade.tier>=4;
+  const desgaste=temDesgaste?sortearDesgaste():{id:'novo',nome:'Nova',mult:1};
+  const stats={
+    hp:Math.max(1,Math.round(statsBase.hp*desgaste.mult)),
+    atk:Math.max(1,Math.round(statsBase.atk*desgaste.mult)),
+    def:Math.max(1,Math.round(statsBase.def*desgaste.mult))
+  };
+  const valor=Math.round(raridade.tier*40*desgaste.mult);
   const anime=raw._animeTitle||(raw.media&&raw.media.nodes[0]&&raw.media.nodes[0].title.romaji)||'Desconhecido';
+  const idVariante=temDesgaste?`${raw.id}_${desgaste.id}`:String(raw.id);
   return{
     id:raw.id,
+    idVariante,
     nome:raw.name.full||raw.name.native||'???',
     imagem:raw.image.large,
     favoritos:fav,
     anime,
     raridade,
+    temDesgaste,
+    desgaste,
+    valor,
     stats
   };
 }
