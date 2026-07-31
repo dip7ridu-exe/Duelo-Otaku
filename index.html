@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Duelo Otaku — 3v3 + YGO</title>
+<title>Duelo Otaku — 3v3 + YGO v2</title>
 <style>
+/* ===== ALL EXISTING CSS FROM PART 1 (unchanged) ===== */
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
   --bg:#0b0b14;--surface:#111119;--surface2:#16161f;--surface3:#1c1c28;
@@ -76,8 +77,7 @@ img{max-width:100%;display:block}
 .team-select{text-align:center}
 .team-slots{display:flex;gap:14px;justify-content:center;margin:18px 0;flex-wrap:wrap}
 .team-slot{width:135px;height:195px;background:var(--surface2);border:2px dashed var(--border);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:.82rem;color:var(--text3);position:relative;overflow:hidden;transition:.25s}
-.team-slot.filled{border-style:solid;border-color:var(--primary)}
-.team-slot.filled img{width:100%;height:100%;object-fit:cover}
+.team-slot.filled{border-style:solid;border-color:var(--primary)}.team-slot.filled img{width:100%;height:100%;object-fit:cover}
 .team-slot .remove-slot{position:absolute;top:5px;right:5px;background:var(--red);color:#fff;width:22px;height:22px;border-radius:50%;font-size:.7rem;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:2;opacity:0;transition:.2s}
 .team-slot.filled:hover .remove-slot{opacity:1}
 .team-slot .slot-name{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:6px 4px 5px;font-size:.7rem;color:#fff;font-weight:600}
@@ -86,16 +86,14 @@ img{max-width:100%;display:block}
 .fight-btn{padding:14px 48px;font-size:1.05rem;font-weight:700;background:var(--red);color:#fff;border-radius:var(--radius);margin-top:16px;text-transform:uppercase;letter-spacing:.5px}
 .fight-btn:hover{opacity:.9}.fight-btn:disabled{opacity:.3;cursor:not-allowed}
 
-/* BATTLE ARENA (3v3) */
-.battle-arena{display:none;min-height:100vh;background:var(--bg);position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;flex-direction:column;overflow:hidden}
-.battle-arena.active{display:flex}
+/* 3v3 BATTLE ARENA CSS (all unchanged from Part 1) */
+.battle-arena{display:none;min-height:100vh;background:var(--bg);position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;flex-direction:column;overflow:hidden}.battle-arena.active{display:flex}
 .battle-top-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 20px;background:var(--surface);border-bottom:1px solid var(--border);z-index:10;flex-shrink:0}
 .battle-top-bar .turn-info{font-weight:600;font-size:.9rem;color:var(--text2);display:flex;align-items:center;gap:6px}
 .battle-top-bar .turn-num{background:var(--surface3);color:var(--accent);padding:2px 10px;border-radius:6px;font-weight:700;font-size:.82rem}
 .battle-top-bar .flee-btn{padding:7px 14px;background:var(--surface2);color:var(--red);border-radius:var(--radius-sm);font-size:.78rem;font-weight:600;border:1px solid var(--border)}
 .battle-top-bar .flee-btn:hover{background:var(--red);color:#fff;border-color:var(--red)}
 .battle-main{display:flex;flex:1;overflow:hidden}
-
 .battle-log-sidebar{width:290px;min-width:260px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0;overflow:hidden}
 .log-header{padding:12px 14px;background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
 .log-header-icon{width:30px;height:30px;background:var(--primary);border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:.85rem;color:#fff}
@@ -118,7 +116,6 @@ img{max-width:100%;display:block}
 .log-entry.log-buff{background:var(--primary-dim);border-left-color:var(--primary)}.log-entry.log-buff .log-entry-icon{background:rgba(109,90,205,.12);color:var(--primary)}
 .log-entry.log-turn-divider{background:var(--surface3);border-left-color:var(--text3);padding:5px 10px;justify-content:center;margin:2px 0}
 .log-entry.log-turn-divider .log-entry-text{color:var(--text2);font-size:.68rem;text-transform:uppercase;letter-spacing:1px;font-weight:700;text-align:center}
-
 .battle-stats-bar{flex-shrink:0;background:var(--surface2);border-top:1px solid var(--border);padding:10px;display:flex;flex-direction:column;gap:6px}
 .stat-row{display:flex;align-items:center;gap:8px;padding:6px 8px;background:var(--surface3);border-radius:6px}
 .stat-row-icon{font-size:.8rem;width:20px;text-align:center;flex-shrink:0}
@@ -130,9 +127,8 @@ img{max-width:100%;display:block}
 .sr-bot .stat-dmg-fill{height:100%;background:var(--red);border-radius:3px;transition:width .5s}
 .stat-comp{text-align:center;font-size:.62rem;padding:3px 0;color:var(--text3)}
 .stat-comp .leading{color:var(--green);font-weight:600}.stat-comp .losing{color:var(--red);font-weight:600}.stat-comp .tied{color:var(--accent)}
-
 .battle-content{flex:1;display:flex;flex-direction:column;overflow:hidden}
-.battle-field{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;position:relative;min-height:300px;background:radial-gradient(ellipse at 25% 70%,rgba(109,90,205,.04),transparent 50%),radial-gradient(ellipse at 75% 30%,rgba(192,57,43,.03),transparent 50%)}
+.battle-field{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;position:relative;min-height:300px}
 .enemy-side{display:flex;align-items:flex-start;gap:20px;margin-bottom:16px;width:100%;max-width:650px;justify-content:flex-end}
 .enemy-char .char-sprite{width:165px;height:165px;object-fit:contain;filter:drop-shadow(0 4px 12px rgba(0,0,0,.5));animation:floatE 3s ease-in-out infinite alternate}
 @keyframes floatE{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
@@ -161,8 +157,7 @@ img{max-width:100%;display:block}
 .switch-section{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
 .switch-btn{padding:7px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:.78rem;display:flex;align-items:center;gap:6px}
 .switch-btn:hover:not(:disabled){border-color:var(--primary);background:var(--primary-dim)}.switch-btn:disabled{opacity:.2;cursor:not-allowed}
-.switch-btn img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}
-.switch-btn .sw-hp{font-size:.62rem;font-weight:600}
+.switch-btn img{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--border)}.switch-btn .sw-hp{font-size:.62rem;font-weight:600}
 .battle-msg-overlay{position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:50;flex-direction:column;gap:14px}
 .battle-msg-overlay h2{font-size:1.8rem;font-weight:800}.battle-msg-overlay p{color:var(--text2);font-size:.85rem}
 .battle-msg-overlay button{padding:12px 36px;background:var(--primary);color:#fff;border-radius:var(--radius-sm);font-size:.95rem;font-weight:700}
@@ -172,7 +167,6 @@ img{max-width:100%;display:block}
 .status-badge{font-size:.56rem;padding:2px 7px;border-radius:10px;font-weight:600;text-transform:uppercase}
 .status-burn{background:rgba(192,57,43,.12);color:#e07070}.status-poison{background:rgba(109,90,205,.12);color:#9b8ce0}
 .status-stun{background:rgba(212,168,67,.12);color:var(--accent)}.status-boost{background:rgba(39,174,96,.12);color:#5cb87a}
-
 .log-toggle-btn{display:none;position:fixed;bottom:120px;left:10px;width:42px;height:42px;background:var(--primary);color:#fff;border-radius:50%;font-size:1.1rem;align-items:center;justify-content:center;z-index:210;box-shadow:0 2px 12px rgba(0,0,0,.4)}
 .log-badge{position:absolute;top:-3px;right:-3px;background:var(--red);color:#fff;width:17px;height:17px;border-radius:50%;font-size:.55rem;display:flex;align-items:center;justify-content:center;font-weight:700}
 
@@ -187,8 +181,11 @@ img{max-width:100%;display:block}
   .enemy-char .char-sprite{width:120px;height:120px}.player-char .char-sprite{width:140px;height:140px}
   .hp-bar-container{width:170px}.move-btn{min-width:100px;padding:10px 6px;font-size:.75rem}
   .team-slot{width:100px;height:145px}.card{width:128px}.card .card-img{height:160px}
-  .ygo-field-zones{gap:4px !important}.ygo-card-slot{width:60px !important;height:75px !important;font-size:.5rem !important}
-  .ygo-hand{gap:4px !important}.ygo-hand-card{width:55px !important;height:75px !important}
+  .ygo-field-zones{gap:3px !important}.ygo-card-slot{width:55px !important;height:72px !important;font-size:.45rem !important}
+  .ygo-hand{gap:3px !important}.ygo-hand-card{width:48px !important;height:68px !important}
+  .ygo-hand-card img{height:42px !important}
+  .ygo-hand-card .hc-name{font-size:.38rem !important}
+  .ygo-st-zones{gap:3px !important}
 }
 
 .modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.6);z-index:300;align-items:center;justify-content:center}
@@ -205,122 +202,150 @@ img{max-width:100%;display:block}
 @keyframes faintAnim{to{opacity:0;transform:translateY(40px) scale(.4)}}.faint-anim{animation:faintAnim .6s ease forwards}
 
 /* ============================================ */
-/* ===== YU-GI-OH MODE — NEW CSS ===== */
+/* ===== YGO MODE V2 — UPDATED CSS ===== */
 /* ============================================ */
 
-/* DECK BUILDER */
 .ygo-deck-builder{text-align:center}
-.ygo-deck-slots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)}
-.ygo-deck-slot{width:70px;height:95px;background:var(--surface3);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.55rem;color:var(--text3);position:relative;overflow:hidden;cursor:pointer;transition:.2s}
-.ygo-deck-slot.filled{border-style:solid;border-color:var(--primary)}
-.ygo-deck-slot.filled img{width:100%;height:100%;object-fit:cover}
-.ygo-deck-slot .ds-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.8);padding:2px;font-size:.45rem;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ygo-deck-slot .ds-remove{position:absolute;top:2px;right:2px;background:var(--red);color:#fff;width:14px;height:14px;border-radius:50%;font-size:.5rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;cursor:pointer}
+.ygo-deck-slots{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0;padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius)}
+.ygo-deck-slot{width:65px;height:90px;background:var(--surface3);border:1px dashed var(--border);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.5rem;color:var(--text3);position:relative;overflow:hidden;cursor:pointer;transition:.2s}
+.ygo-deck-slot.filled{border-style:solid;border-color:var(--primary)}.ygo-deck-slot.filled img{width:100%;height:100%;object-fit:cover}
+.ygo-deck-slot .ds-name{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);padding:2px;font-size:.42rem;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ygo-deck-slot .ds-type{position:absolute;top:2px;left:2px;font-size:.4rem;padding:1px 3px;border-radius:3px;font-weight:700;color:#fff}
+.ds-type-monster{background:#8b6914}.ds-type-spell{background:#1a6b2c}.ds-type-trap{background:#7b2d8b}
+.ygo-deck-slot .ds-remove{position:absolute;top:2px;right:2px;background:var(--red);color:#fff;width:13px;height:13px;border-radius:50%;font-size:.45rem;display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;cursor:pointer}
 .ygo-deck-slot:hover .ds-remove{opacity:1}
-.ygo-deck-info{font-size:.8rem;color:var(--text2);margin-bottom:12px}
+.ygo-deck-info{font-size:.78rem;color:var(--text2);margin-bottom:10px}
 .ygo-deck-info strong{color:var(--accent)}
-.ygo-start-btn{padding:14px 48px;font-size:1.05rem;font-weight:700;background:#8b6914;color:#fff;border-radius:var(--radius);margin-top:12px;text-transform:uppercase;letter-spacing:.5px}
+.ygo-start-btn{padding:13px 44px;font-size:1rem;font-weight:700;background:#8b6914;color:#fff;border-radius:var(--radius);margin-top:10px;text-transform:uppercase;letter-spacing:.5px}
 .ygo-start-btn:hover{opacity:.9}.ygo-start-btn:disabled{opacity:.3;cursor:not-allowed}
 
-.ygo-card-pick{max-height:300px;overflow-y:auto;padding:10px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-top:16px}
-.ygo-pick-card{width:90px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:.2s;position:relative}
-.ygo-pick-card:hover{border-color:var(--primary);transform:translateY(-2px)}
-.ygo-pick-card.in-deck{opacity:.35;pointer-events:none}
-.ygo-pick-card img{width:100%;height:110px;object-fit:cover}
-.ygo-pick-card .ypc-info{padding:4px;text-align:center}
-.ygo-pick-card .ypc-name{font-size:.55rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ygo-pick-card .ypc-stats{font-size:.5rem;color:var(--text3)}
-.ygo-pick-card .ypc-lvl{font-size:.5rem;color:var(--accent)}
+.ygo-card-pick{max-height:280px;overflow-y:auto;padding:8px;display:flex;flex-wrap:wrap;gap:6px;justify-content:center;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-top:14px}
+.ygo-pick-card{width:85px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;overflow:hidden;cursor:pointer;transition:.2s;position:relative}
+.ygo-pick-card:hover{border-color:var(--primary);transform:translateY(-2px)}.ygo-pick-card.in-deck{opacity:.3;pointer-events:none}
+.ygo-pick-card img{width:100%;height:100px;object-fit:cover}
+.ygo-pick-card .ypc-info{padding:3px;text-align:center}
+.ygo-pick-card .ypc-name{font-size:.5rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ygo-pick-card .ypc-stats{font-size:.45rem;color:var(--text3)}
+.ygo-pick-card .ypc-lvl{font-size:.45rem;color:var(--accent)}
+.ygo-pick-card .ypc-type-badge{position:absolute;top:2px;left:2px;font-size:.4rem;padding:1px 4px;border-radius:3px;font-weight:700;color:#fff}
 
-/* YGO DUEL ARENA */
+/* YGO ARENA V2 */
 .ygo-arena{display:none;min-height:100vh;background:var(--bg);position:fixed;top:0;left:0;right:0;bottom:0;z-index:200;flex-direction:column;overflow:hidden}
 .ygo-arena.active{display:flex}
 
-.ygo-top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 16px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
-.ygo-top-bar .ygo-phase{font-size:.75rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
-.ygo-top-bar .ygo-turn-info{font-size:.78rem;color:var(--text2);font-weight:600}
-.ygo-top-bar .ygo-flee{padding:6px 12px;background:var(--surface2);color:var(--red);border:1px solid var(--border);border-radius:6px;font-size:.72rem;font-weight:600}
+.ygo-top-bar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0}
+.ygo-top-bar .ygo-phase{font-size:.72rem;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+.ygo-top-bar .ygo-turn-info{font-size:.75rem;color:var(--text2);font-weight:600}
+.ygo-top-bar .ygo-flee{padding:5px 10px;background:var(--surface2);color:var(--red);border:1px solid var(--border);border-radius:6px;font-size:.7rem;font-weight:600}
 .ygo-top-bar .ygo-flee:hover{background:var(--red);color:#fff}
 
-/* LP DISPLAY */
-.ygo-lp-bar{display:flex;justify-content:space-between;align-items:center;padding:6px 16px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0}
-.ygo-lp{display:flex;align-items:center;gap:8px}
-.ygo-lp-label{font-size:.68rem;color:var(--text3);font-weight:600;text-transform:uppercase}
-.ygo-lp-value{font-size:1.2rem;font-weight:800}
+.ygo-lp-bar{display:flex;justify-content:space-between;align-items:center;padding:5px 14px;background:var(--surface2);border-bottom:1px solid var(--border);flex-shrink:0}
+.ygo-lp{display:flex;align-items:center;gap:6px}
+.ygo-lp-label{font-size:.62rem;color:var(--text3);font-weight:600;text-transform:uppercase}
+.ygo-lp-value{font-size:1.1rem;font-weight:800}
 .ygo-lp.player-lp .ygo-lp-value{color:var(--blue)}
 .ygo-lp.bot-lp .ygo-lp-value{color:var(--red)}
-.ygo-lp-bar-bg{width:120px;height:6px;background:var(--surface3);border-radius:4px;overflow:hidden}
+.ygo-lp-bar-bg{width:100px;height:5px;background:var(--surface3);border-radius:4px;overflow:hidden}
 .ygo-lp-bar-fill{height:100%;border-radius:4px;transition:width .5s ease}
-.player-lp .ygo-lp-bar-fill{background:var(--blue)}
-.bot-lp .ygo-lp-bar-fill{background:var(--red)}
-.ygo-vs{font-size:.9rem;font-weight:800;color:var(--text3)}
+.player-lp .ygo-lp-bar-fill{background:var(--blue)}.bot-lp .ygo-lp-bar-fill{background:var(--red)}
+.ygo-vs{font-size:.8rem;font-weight:800;color:var(--text3)}
 
-/* FIELD */
-.ygo-field{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px;gap:8px;overflow-y:auto;min-height:0}
-
-.ygo-field-label{font-size:.6rem;color:var(--text3);text-transform:uppercase;letter-spacing:1px;text-align:center;margin:2px 0}
-.ygo-field-zones{display:flex;gap:6px;justify-content:center}
+/* FIELD V2 — with Spell/Trap zones */
+.ygo-field{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:8px;gap:4px;overflow-y:auto;min-height:0}
+.ygo-field-label{font-size:.55rem;color:var(--text3);text-transform:uppercase;letter-spacing:.8px;text-align:center;margin:1px 0}
+.ygo-field-zones{display:flex;gap:5px;justify-content:center}
 
 .ygo-card-slot{
-  width:75px;height:100px;
-  background:var(--surface3);border:1px solid var(--border);
-  border-radius:6px;display:flex;align-items:center;justify-content:center;
-  font-size:.55rem;color:var(--text3);
-  position:relative;overflow:hidden;transition:.2s;cursor:default;
+  width:70px;height:92px;background:var(--surface3);border:1px solid var(--border);
+  border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-size:.5rem;color:var(--text3);position:relative;overflow:hidden;transition:.2s;cursor:default;
 }
 .ygo-card-slot.has-card{border-color:var(--border-light)}
 .ygo-card-slot.has-card img{width:100%;height:100%;object-fit:cover}
-.ygo-card-slot .cs-atk{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.85);padding:2px;font-size:.5rem;color:var(--accent);font-weight:700;text-align:center;display:flex;justify-content:space-between;padding:1px 4px}
-.ygo-card-slot.defense{border-color:#2980b9}
-.ygo-card-slot.can-attack{border-color:var(--green);box-shadow:0 0 8px rgba(39,174,96,.2);cursor:pointer}
-.ygo-card-slot.attack-target{border-color:var(--red);box-shadow:0 0 8px rgba(192,57,43,.2);cursor:pointer}
+.ygo-card-slot .cs-atk{position:absolute;bottom:0;left:0;right:0;background:rgba(0,0,0,.88);padding:1px 3px;font-size:.45rem;color:var(--accent);font-weight:700;display:flex;justify-content:space-between}
+.ygo-card-slot.defense{border-color:#2980b9;box-shadow:inset 0 0 6px rgba(41,128,185,.15)}
+.ygo-card-slot.facedown{border-color:#7b2d8b}
+.ygo-card-slot.facedown img{display:none}
+.ygo-card-slot.facedown::after{content:'🂠';font-size:1.4rem}
+.ygo-card-slot.can-attack{border-color:var(--green);box-shadow:0 0 6px rgba(39,174,96,.2);cursor:pointer}
+.ygo-card-slot.attack-target{border-color:var(--red);box-shadow:0 0 6px rgba(192,57,43,.2);cursor:pointer}
+.ygo-card-slot .cs-effect{position:absolute;top:2px;left:2px;font-size:.4rem;background:rgba(0,0,0,.7);color:#f0c040;padding:1px 3px;border-radius:2px;font-weight:700}
 
-.ygo-field-divider{width:80%;max-width:500px;height:1px;background:var(--border);margin:4px 0}
+/* Spell/Trap zones */
+.ygo-st-zones{display:flex;gap:5px;justify-content:center}
+.ygo-st-slot{
+  width:70px;height:40px;background:var(--surface3);border:1px solid var(--border);
+  border-radius:4px;display:flex;align-items:center;justify-content:center;
+  font-size:.42rem;color:var(--text3);position:relative;overflow:hidden;transition:.2s;
+}
+.ygo-st-slot.has-st{border-color:var(--border-light)}
+.ygo-st-slot.spell-card{border-color:#1a6b2c;background:rgba(26,107,44,.06)}
+.ygo-st-slot.trap-card{border-color:#7b2d8b;background:rgba(123,45,139,.06)}
+.ygo-st-slot.trap-set{border-color:#444}
+.ygo-st-slot.trap-set::after{content:'🂠';font-size:.9rem}
+.ygo-st-slot .st-name{font-size:.42rem;color:var(--text);font-weight:600;text-align:center;padding:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+.ygo-st-slot .st-icon{font-size:.7rem}
 
-/* HAND */
-.ygo-hand-area{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:8px 10px}
-.ygo-hand-label{font-size:.6rem;color:var(--text3);text-align:center;margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.ygo-hand{display:flex;gap:6px;justify-content:center;overflow-x:auto;padding:4px 0}
+.ygo-field-divider{width:70%;max-width:400px;height:1px;background:var(--border);margin:3px 0}
+
+/* HAND V2 */
+.ygo-hand-area{flex-shrink:0;background:var(--surface);border-top:1px solid var(--border);padding:6px 8px}
+.ygo-hand-label{font-size:.55rem;color:var(--text3);text-align:center;margin-bottom:3px;text-transform:uppercase;letter-spacing:.5px}
+.ygo-hand{display:flex;gap:5px;justify-content:center;overflow-x:auto;padding:2px 0}
 .ygo-hand-card{
-  width:65px;height:90px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:6px;overflow:hidden;cursor:pointer;
-  transition:.2s;flex-shrink:0;position:relative;
+  width:60px;height:82px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:5px;overflow:hidden;cursor:pointer;transition:.2s;flex-shrink:0;position:relative;
 }
 .ygo-hand-card:hover{transform:translateY(-6px);border-color:var(--primary);z-index:2}
-.ygo-hand-card img{width:100%;height:60px;object-fit:cover}
-.ygo-hand-card .hc-info{padding:2px 3px;text-align:center}
-.ygo-hand-card .hc-name{font-size:.45rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ygo-hand-card .hc-stats{font-size:.42rem;color:var(--accent)}
-.ygo-hand-card .hc-lvl{position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:var(--accent);font-size:.45rem;font-weight:700;padding:1px 4px;border-radius:3px}
-.ygo-hand-card.selected-hand{border-color:var(--green);box-shadow:0 0 8px rgba(39,174,96,.2)}
+.ygo-hand-card img{width:100%;height:50px;object-fit:cover}
+.ygo-hand-card .hc-info{padding:1px 2px;text-align:center}
+.ygo-hand-card .hc-name{font-size:.42rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ygo-hand-card .hc-stats{font-size:.38rem;color:var(--accent)}
+.ygo-hand-card .hc-lvl{position:absolute;top:1px;right:1px;background:rgba(0,0,0,.7);color:var(--accent);font-size:.4rem;font-weight:700;padding:1px 3px;border-radius:2px}
+.ygo-hand-card .hc-type{position:absolute;top:1px;left:1px;font-size:.38rem;padding:1px 3px;border-radius:2px;font-weight:700;color:#fff}
+.hc-type-monster{background:#8b6914}.hc-type-spell{background:#1a6b2c}.hc-type-trap{background:#7b2d8b}
+.ygo-hand-card.selected-hand{border-color:var(--green);box-shadow:0 0 6px rgba(39,174,96,.25)}
 
-/* ACTION BUTTONS */
-.ygo-actions{flex-shrink:0;padding:8px 12px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
-.ygo-act-btn{padding:8px 16px;border-radius:6px;font-size:.75rem;font-weight:700;color:#fff;border:1px solid transparent}
-.ygo-act-btn:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}.ygo-act-btn:disabled{opacity:.25;cursor:not-allowed}
-.ygo-act-btn.act-summon{background:#8b6914}.ygo-act-btn.act-attack{background:var(--red)}.ygo-act-btn.act-endturn{background:var(--surface3);color:var(--text);border-color:var(--border)}
-.ygo-act-btn.act-defense{background:#2c6fad}
-.ygo-act-btn.act-direct{background:#7d2e8e}
+/* ACTION BUTTONS V2 */
+.ygo-actions{flex-shrink:0;padding:6px 10px;background:var(--surface2);border-top:1px solid var(--border);display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.ygo-act-btn{padding:7px 12px;border-radius:5px;font-size:.68rem;font-weight:700;color:#fff;border:1px solid transparent}
+.ygo-act-btn:hover:not(:disabled){opacity:.85;transform:translateY(-1px)}.ygo-act-btn:disabled{opacity:.2;cursor:not-allowed}
+.ygo-act-btn.act-summon{background:#8b6914}.ygo-act-btn.act-attack{background:var(--red)}
+.ygo-act-btn.act-endturn{background:var(--surface3);color:var(--text);border-color:var(--border)}
+.ygo-act-btn.act-defense{background:#2c6fad}.ygo-act-btn.act-direct{background:#7d2e8e}
+.ygo-act-btn.act-spell{background:#1a6b2c}.ygo-act-btn.act-trap{background:#5e2070}
+.ygo-act-btn.act-flip{background:#8b6914}.ygo-act-btn.act-pos{background:var(--surface3);color:var(--text2);border-color:var(--border)}
 
-/* YGO LOG */
-.ygo-log{max-height:80px;overflow-y:auto;padding:6px 10px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:2px}
-.ygo-log-line{font-size:.68rem;color:var(--text2);padding:2px 0;border-bottom:1px solid rgba(255,255,255,.02)}
+/* YGO LOG V2 */
+.ygo-log{max-height:70px;overflow-y:auto;padding:4px 8px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0;display:flex;flex-direction:column;gap:1px}
+.ygo-log-line{font-size:.64rem;color:var(--text2);padding:2px 0;border-bottom:1px solid rgba(255,255,255,.02)}
 .ygo-log-line.yl-player{color:var(--blue)}.ygo-log-line.yl-enemy{color:var(--red)}.ygo-log-line.yl-system{color:var(--accent)}
+.ygo-log-line.yl-spell{color:#3cb371}.ygo-log-line.yl-trap{color:#b366d4}
 
-/* YGO END OVERLAY */
-.ygo-end-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:250;flex-direction:column;gap:16px}
-.ygo-end-overlay h2{font-size:2rem;font-weight:800}
-.ygo-end-overlay p{color:var(--text2)}
-.ygo-end-overlay button{padding:12px 40px;background:var(--primary);color:#fff;border-radius:var(--radius-sm);font-weight:700;font-size:1rem}
+/* YGO ANIMATIONS */
+@keyframes ygoAttackAnim{0%{transform:translateX(0)}40%{transform:translateX(30px)}60%{transform:translateX(-5px)}100%{transform:translateX(0)}}
+@keyframes ygoDestroyAnim{0%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.1)}100%{opacity:0;transform:scale(0) rotate(20deg)}}
+@keyframes ygoSummonAnim{0%{opacity:0;transform:scale(.3) translateY(20px)}60%{opacity:1;transform:scale(1.1)}100%{transform:scale(1) translateY(0)}}
+@keyframes ygoSpellAnim{0%{box-shadow:none}50%{box-shadow:0 0 15px rgba(26,107,44,.5)}100%{box-shadow:none}}
+@keyframes ygoTrapAnim{0%{box-shadow:none}50%{box-shadow:0 0 15px rgba(123,45,139,.5)}100%{box-shadow:none}}
+@keyframes ygoLPHit{0%,100%{color:inherit}50%{color:var(--red);transform:scale(1.2)}}
+.ygo-atk-anim{animation:ygoAttackAnim .4s ease}
+.ygo-destroy-anim{animation:ygoDestroyAnim .5s ease forwards}
+.ygo-summon-anim{animation:ygoSummonAnim .5s ease}
+.ygo-spell-anim{animation:ygoSpellAnim .6s ease}
+.ygo-trap-anim{animation:ygoTrapAnim .6s ease}
+.ygo-lp-hit{animation:ygoLPHit .5s ease}
+
+.ygo-end-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:250;flex-direction:column;gap:14px}
+.ygo-end-overlay h2{font-size:1.8rem;font-weight:800}.ygo-end-overlay p{color:var(--text2);font-size:.85rem}
+.ygo-end-overlay button{padding:12px 36px;background:var(--primary);color:#fff;border-radius:var(--radius-sm);font-weight:700;font-size:.95rem}
+.ygo-end-overlay .ygo-end-stats{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 20px;display:flex;gap:18px}
+.ygo-end-overlay .yes{text-align:center}.ygo-end-overlay .yes-v{font-size:1.1rem;font-weight:800}.ygo-end-overlay .yes-l{font-size:.55rem;color:var(--text3);text-transform:uppercase}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>⚔️ Duelo <span>Otaku</span></h1>
-  <div class="coins-display">💰 <span id="coins">0</span></div>
-</div>
+<div class="header"><h1>⚔️ Duelo <span>Otaku</span></h1><div class="coins-display">💰 <span id="coins">0</span></div></div>
 
 <div class="nav">
   <button class="active" onclick="showSection('roll')">🎴 Rolar</button>
@@ -330,104 +355,56 @@ img{max-width:100%;display:block}
   <button onclick="showSection('ygo')">🃏 Modo YGO</button>
 </div>
 
-<!-- ROLL -->
-<div class="section active" id="sec-roll">
-  <h2 class="section-title">🎲 Rolar Cartas</h2>
-  <p style="text-align:center;color:var(--text2);font-size:.82rem;max-width:480px;margin:0 auto 16px">Personagens aleatórios da AniList. Guarde até 2 das 5 cartas.</p>
-  <div class="roll-area"><button class="roll-btn" id="rollBtn" onclick="rollCards()">🎲 Rolar 5 cartas</button><div class="roll-info" id="rollInfo"></div><div class="roll-saves" id="rollSaves"></div></div>
-  <div class="cards-row" id="rollResults"></div>
-</div>
+<!-- ROLL --><div class="section active" id="sec-roll"><h2 class="section-title">🎲 Rolar Cartas</h2><p style="text-align:center;color:var(--text2);font-size:.82rem;max-width:480px;margin:0 auto 16px">Personagens aleatórios. Guarde até 2 de 5.</p><div class="roll-area"><button class="roll-btn" id="rollBtn" onclick="rollCards()">🎲 Rolar 5 cartas</button><div class="roll-info" id="rollInfo"></div><div class="roll-saves" id="rollSaves"></div></div><div class="cards-row" id="rollResults"></div></div>
+<!-- COLLECTION --><div class="section" id="sec-collection"><h2 class="section-title">🗂️ Minha Coleção</h2><div class="collection-controls"><input type="text" id="searchCollection" placeholder="🔍 Buscar..." oninput="renderColl()"><select id="filterRarity" onchange="renderColl()"><option value="">Todas</option><option value="Mythic">Mythic</option><option value="Legendary">Legendary</option><option value="Ultra Rare">Ultra Rare</option><option value="Super Rare">Super Rare</option><option value="Rare">Rare</option><option value="Uncommon">Uncommon</option><option value="Common">Common</option></select><select id="sortCollection" onchange="renderColl()"><option value="newest">Recentes</option><option value="rarity">Raridade</option><option value="name">Nome</option></select></div><div class="cards-row" id="collectionGrid"></div></div>
+<!-- SHOP --><div class="section" id="sec-shop"><h2 class="section-title">🛒 Loja</h2><p style="text-align:center;color:var(--text2);margin-bottom:18px;font-size:.82rem">Ganhe moedas vencendo!</p><div class="shop-packs"><div class="shop-pack"><h3>📦 Básico</h3><p>3 cartas (Uncommon+)</p><div class="price">💰 100</div><button onclick="buyPack('basic')">Comprar</button></div><div class="shop-pack"><h3>💎 Premium</h3><p>3 cartas (Rare+)</p><div class="price">💰 300</div><button onclick="buyPack('premium')">Comprar</button></div><div class="shop-pack"><h3>👑 Lendário</h3><p>3 cartas (Super Rare+)</p><div class="price">💰 800</div><button onclick="buyPack('legendary')">Comprar</button></div></div><div class="cards-row" id="shopResults" style="margin-top:18px"></div></div>
+<!-- DUEL 3v3 --><div class="section" id="sec-duel"><h2 class="section-title">⚔️ Duelo 3v3</h2><p style="text-align:center;color:var(--text2);margin-bottom:12px;font-size:.82rem">Escolha 3 personagens.</p><div class="team-select"><div class="team-slots" id="teamSlots"><div class="team-slot" id="slot0"><span>Slot 1</span></div><div class="team-slot" id="slot1"><span>Slot 2</span></div><div class="team-slot" id="slot2"><span>Slot 3</span></div></div><button class="fight-btn" id="fightBtn" onclick="startBattle()" disabled>⚔️ INICIAR DUELO</button><h3 style="margin-top:22px;margin-bottom:10px;color:var(--text2);font-size:.9rem">Toque para adicionar:</h3><div class="collection-pick" id="teamPicker"></div></div></div>
 
-<!-- COLLECTION -->
-<div class="section" id="sec-collection">
-  <h2 class="section-title">🗂️ Minha Coleção</h2>
-  <div class="collection-controls">
-    <input type="text" id="searchCollection" placeholder="🔍 Buscar..." oninput="renderColl()">
-    <select id="filterRarity" onchange="renderColl()"><option value="">Todas</option><option value="Mythic">Mythic</option><option value="Legendary">Legendary</option><option value="Ultra Rare">Ultra Rare</option><option value="Super Rare">Super Rare</option><option value="Rare">Rare</option><option value="Uncommon">Uncommon</option><option value="Common">Common</option></select>
-    <select id="sortCollection" onchange="renderColl()"><option value="newest">Recentes</option><option value="rarity">Raridade</option><option value="name">Nome</option></select>
-  </div>
-  <div class="cards-row" id="collectionGrid"></div>
-</div>
-
-<!-- SHOP -->
-<div class="section" id="sec-shop">
-  <h2 class="section-title">🛒 Loja</h2>
-  <p style="text-align:center;color:var(--text2);margin-bottom:18px;font-size:.82rem">Ganhe moedas vencendo!</p>
-  <div class="shop-packs">
-    <div class="shop-pack"><h3>📦 Básico</h3><p>3 cartas (Uncommon+)</p><div class="price">💰 100</div><button onclick="buyPack('basic')">Comprar</button></div>
-    <div class="shop-pack"><h3>💎 Premium</h3><p>3 cartas (Rare+)</p><div class="price">💰 300</div><button onclick="buyPack('premium')">Comprar</button></div>
-    <div class="shop-pack"><h3>👑 Lendário</h3><p>3 cartas (Super Rare+)</p><div class="price">💰 800</div><button onclick="buyPack('legendary')">Comprar</button></div>
-  </div>
-  <div class="cards-row" id="shopResults" style="margin-top:18px"></div>
-</div>
-
-<!-- DUEL 3v3 -->
-<div class="section" id="sec-duel">
-  <h2 class="section-title">⚔️ Duelo 3v3</h2>
-  <p style="text-align:center;color:var(--text2);margin-bottom:12px;font-size:.82rem">Escolha 3 personagens.</p>
-  <div class="team-select">
-    <div class="team-slots" id="teamSlots"><div class="team-slot" id="slot0"><span>Slot 1</span></div><div class="team-slot" id="slot1"><span>Slot 2</span></div><div class="team-slot" id="slot2"><span>Slot 3</span></div></div>
-    <button class="fight-btn" id="fightBtn" onclick="startBattle()" disabled>⚔️ INICIAR DUELO</button>
-    <h3 style="margin-top:22px;margin-bottom:10px;color:var(--text2);font-size:.9rem">Toque para adicionar:</h3>
-    <div class="collection-pick" id="teamPicker"></div>
-  </div>
-</div>
-
-<!-- ============================== -->
-<!-- ===== YU-GI-OH MODE ===== -->
-<!-- ============================== -->
+<!-- ======================================= -->
+<!-- ===== YGO MODE V2 — UPDATED HTML ===== -->
+<!-- ======================================= -->
 <div class="section" id="sec-ygo">
   <h2 class="section-title">🃏 Modo Yu-Gi-Oh</h2>
-  <p style="text-align:center;color:var(--text2);font-size:.82rem;max-width:520px;margin:0 auto 8px">
-    Monte um deck de <strong>10 cartas</strong> da sua coleção e dueliste no estilo Yu-Gi-Oh!
-    Cada carta vira um Monstro com ATK/DEF e nível baseado na raridade.
+  <p style="text-align:center;color:var(--text2);font-size:.8rem;max-width:540px;margin:0 auto 6px">
+    Monte um deck de <strong>10 cartas</strong>. Cada carta da coleção gera 1 Monstro + 1 Magia ou Armadilha aleatória!
   </p>
-  <p style="text-align:center;color:var(--text3);font-size:.72rem;margin-bottom:16px">
-    ⭐ Nível 1-4: Invocação Normal | ⭐ Nível 5-6: 1 Tributo | ⭐ Nível 7+: 2 Tributos | LP: 4000
+  <p style="text-align:center;color:var(--text3);font-size:.68rem;margin-bottom:14px">
+    ⭐ Lv1-4: Normal | Lv5-6: 1 Tributo | Lv7+: 2 Tributos | 🪄 Magias: efeitos imediatos | 🪤 Traps: setadas face-down, ativam no turno do oponente | LP: 4000
   </p>
 
   <div class="ygo-deck-builder">
     <div class="ygo-deck-info">Deck: <strong id="ygoDeckCount">0</strong>/10</div>
     <div class="ygo-deck-slots" id="ygoDeckSlots"></div>
     <button class="ygo-start-btn" id="ygoStartBtn" onclick="ygoStartDuel()" disabled>🃏 INICIAR DUELO YGO</button>
-
-    <h3 style="margin-top:20px;margin-bottom:8px;color:var(--text2);font-size:.85rem">Cartas disponíveis:</h3>
+    <h3 style="margin-top:18px;margin-bottom:6px;color:var(--text2);font-size:.82rem">Cartas disponíveis:</h3>
     <div class="ygo-card-pick" id="ygoCardPick"></div>
   </div>
 </div>
 
-<!-- YGO DUEL ARENA -->
+<!-- YGO DUEL ARENA V2 -->
 <div class="ygo-arena" id="ygoArena">
   <div class="ygo-top-bar">
     <div class="ygo-turn-info">Turno <span id="ygoTurnNum">1</span></div>
     <div class="ygo-phase" id="ygoPhase">MAIN PHASE</div>
-    <button class="ygo-flee" onclick="ygoFlee()">🏳️ Desistir</button>
+    <button class="ygo-flee" onclick="ygoFlee()">🏳️ Sair</button>
   </div>
 
   <div class="ygo-lp-bar">
-    <div class="ygo-lp player-lp">
-      <span class="ygo-lp-label">Você</span>
-      <span class="ygo-lp-value" id="ygoPlayerLP">4000</span>
-      <div class="ygo-lp-bar-bg"><div class="ygo-lp-bar-fill" id="ygoPlayerLPBar" style="width:100%"></div></div>
-    </div>
+    <div class="ygo-lp player-lp"><span class="ygo-lp-label">Você</span><span class="ygo-lp-value" id="ygoPlayerLP">4000</span><div class="ygo-lp-bar-bg"><div class="ygo-lp-bar-fill" id="ygoPlayerLPBar" style="width:100%"></div></div></div>
     <span class="ygo-vs">VS</span>
-    <div class="ygo-lp bot-lp">
-      <div class="ygo-lp-bar-bg"><div class="ygo-lp-bar-fill" id="ygoBotLPBar" style="width:100%"></div></div>
-      <span class="ygo-lp-value" id="ygoBotLP">4000</span>
-      <span class="ygo-lp-label">Bot</span>
-    </div>
+    <div class="ygo-lp bot-lp"><div class="ygo-lp-bar-bg"><div class="ygo-lp-bar-fill" id="ygoBotLPBar" style="width:100%"></div></div><span class="ygo-lp-value" id="ygoBotLP">4000</span><span class="ygo-lp-label">Bot</span></div>
   </div>
 
   <div class="ygo-field" id="ygoField">
-    <!-- BOT FIELD -->
-    <div class="ygo-field-label">🤖 Monstros do Bot</div>
+    <div class="ygo-field-label">🤖 Bot Spell/Trap</div>
+    <div class="ygo-st-zones" id="ygoBotST"></div>
+    <div class="ygo-field-label">🤖 Bot Monstros</div>
     <div class="ygo-field-zones" id="ygoBotMonsters"></div>
-    
     <div class="ygo-field-divider"></div>
-
-    <!-- PLAYER FIELD -->
     <div class="ygo-field-zones" id="ygoPlayerMonsters"></div>
     <div class="ygo-field-label">⚔️ Seus Monstros</div>
+    <div class="ygo-st-zones" id="ygoPlayerST"></div>
+    <div class="ygo-field-label">🪄 Suas Spell/Trap</div>
   </div>
 
   <div class="ygo-log" id="ygoLog"></div>
@@ -435,141 +412,194 @@ img{max-width:100%;display:block}
   <div class="ygo-actions" id="ygoActions">
     <button class="ygo-act-btn act-summon" id="ygoSummonBtn" onclick="ygoSummon()" disabled>⭐ Invocar</button>
     <button class="ygo-act-btn act-defense" id="ygoDefBtn" onclick="ygoSummonDef()" disabled>🛡️ Def</button>
+    <button class="ygo-act-btn act-spell" id="ygoSpellBtn" onclick="ygoPlaySpell()" disabled>🪄 Magia</button>
+    <button class="ygo-act-btn act-trap" id="ygoTrapBtn" onclick="ygoSetTrap()" disabled>🪤 Setar</button>
+    <button class="ygo-act-btn act-flip" id="ygoFlipBtn" onclick="ygoFlipSummon()" disabled>🔄 Flip</button>
+    <button class="ygo-act-btn act-pos" id="ygoPosBtn" onclick="ygoChangePos()" disabled>↔️ Pos</button>
     <button class="ygo-act-btn act-attack" id="ygoAttackBtn" onclick="ygoAttackPhase()" disabled>⚔️ Batalhar</button>
     <button class="ygo-act-btn act-direct" id="ygoDirectBtn" onclick="ygoDirectAttack()" disabled>💥 Direto</button>
-    <button class="ygo-act-btn act-endturn" onclick="ygoEndTurn()">⏭️ Fim do Turno</button>
+    <button class="ygo-act-btn act-endturn" onclick="ygoEndTurn()">⏭️ Fim</button>
   </div>
 
   <div class="ygo-hand-area">
-    <div class="ygo-hand-label">🖐️ Sua Mão (<span id="ygoHandCount">0</span>)</div>
+    <div class="ygo-hand-label">🖐️ Mão (<span id="ygoHandCount">0</span>) — Deck: <span id="ygoDeckLeft">0</span></div>
     <div class="ygo-hand" id="ygoHand"></div>
   </div>
 </div>
 
 <!-- 3v3 BATTLE ARENA (unchanged) -->
-<div class="battle-arena" id="battleArena">
-  <div class="battle-top-bar"><div class="turn-info">Turno <span class="turn-num" id="turnCount">1</span></div><span style="font-weight:700;color:var(--text);font-size:.9rem">⚔️ DUELO 3v3</span><button class="flee-btn" onclick="fleeBattle()">🏳️ Desistir</button></div>
-  <div class="battle-main">
-    <div class="battle-log-sidebar" id="battleLogSidebar"><div class="log-header"><div class="log-header-icon">📜</div><h3>Histórico</h3><span class="log-turn-badge" id="logTurnBadge">T1</span></div><div class="log-entries" id="battleLog"></div><div class="battle-stats-bar"><div class="stat-row sr-turn"><div class="stat-row-icon">⏱️</div><div class="stat-row-info"><div class="stat-row-label">Turno</div><div class="stat-row-value" id="statTurn">1</div></div></div><div class="stat-row sr-you"><div class="stat-row-icon">🔵</div><div class="stat-row-info"><div class="stat-row-label">Seu dano</div><div class="stat-row-value" id="statYouDmg">0</div><div class="stat-dmg-bar"><div class="stat-dmg-fill" id="statYouBar" style="width:0%"></div></div></div></div><div class="stat-row sr-bot"><div class="stat-row-icon">🔴</div><div class="stat-row-info"><div class="stat-row-label">Dano bot</div><div class="stat-row-value" id="statBotDmg">0</div><div class="stat-dmg-bar"><div class="stat-dmg-fill" id="statBotBar" style="width:0%"></div></div></div></div><div class="stat-comp" id="statComp">Empate</div><div class="stat-row sr-total"><div class="stat-row-icon">⚡</div><div class="stat-row-info"><div class="stat-row-label">Ações</div><div class="stat-row-value" id="statActions">0</div></div></div></div></div>
-    <div class="log-overlay" id="logOverlay" onclick="toggleLog()"></div>
-    <div class="battle-content"><div class="battle-field" id="battleField"><div class="enemy-side"><div class="enemy-info"><div class="char-battle-name" id="enemyName">—</div><div class="char-battle-anime" id="enemyAnime"></div><div class="hp-bar-container"><div class="hp-bar-label"><span>HP</span><span id="enemyHpNum"></span></div><div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHpBar" style="width:100%"></div></div></div><div class="status-badges" id="enemyStatus"></div><div class="enemy-team-icons" id="enemyTeamIcons"></div></div><div class="enemy-char"><img class="char-sprite" id="enemySprite" src="" alt=""></div></div><div class="player-side"><div class="player-char"><img class="char-sprite" id="playerSprite" src="" alt=""></div><div class="player-info"><div class="char-battle-name" id="playerName">—</div><div class="char-battle-anime" id="playerAnime"></div><div class="hp-bar-container"><div class="hp-bar-label"><span>HP</span><span id="playerHpNum"></span></div><div class="hp-bar-bg"><div class="hp-bar-fill" id="playerHpBar" style="width:100%"></div></div></div><div class="status-badges" id="playerStatus"></div><div class="player-team-icons" id="playerTeamIcons"></div></div></div></div><div class="battle-panel"><div class="battle-actions" id="battleActions"></div><div class="switch-section" id="switchSection"></div></div></div>
-  </div>
-  <button class="log-toggle-btn" id="logToggleBtn" onclick="toggleLog()">📜<span class="log-badge" id="logNewBadge" style="display:none">0</span></button>
-</div>
+<div class="battle-arena" id="battleArena"><div class="battle-top-bar"><div class="turn-info">Turno <span class="turn-num" id="turnCount">1</span></div><span style="font-weight:700;color:var(--text);font-size:.9rem">⚔️ DUELO 3v3</span><button class="flee-btn" onclick="fleeBattle()">🏳️ Desistir</button></div><div class="battle-main"><div class="battle-log-sidebar" id="battleLogSidebar"><div class="log-header"><div class="log-header-icon">📜</div><h3>Histórico</h3><span class="log-turn-badge" id="logTurnBadge">T1</span></div><div class="log-entries" id="battleLog"></div><div class="battle-stats-bar"><div class="stat-row sr-turn"><div class="stat-row-icon">⏱️</div><div class="stat-row-info"><div class="stat-row-label">Turno</div><div class="stat-row-value" id="statTurn">1</div></div></div><div class="stat-row sr-you"><div class="stat-row-icon">🔵</div><div class="stat-row-info"><div class="stat-row-label">Seu dano</div><div class="stat-row-value" id="statYouDmg">0</div><div class="stat-dmg-bar"><div class="stat-dmg-fill" id="statYouBar" style="width:0%"></div></div></div></div><div class="stat-row sr-bot"><div class="stat-row-icon">🔴</div><div class="stat-row-info"><div class="stat-row-label">Dano bot</div><div class="stat-row-value" id="statBotDmg">0</div><div class="stat-dmg-bar"><div class="stat-dmg-fill" id="statBotBar" style="width:0%"></div></div></div></div><div class="stat-comp" id="statComp">Empate</div><div class="stat-row sr-total"><div class="stat-row-icon">⚡</div><div class="stat-row-info"><div class="stat-row-label">Ações</div><div class="stat-row-value" id="statActions">0</div></div></div></div></div><div class="log-overlay" id="logOverlay" onclick="toggleLog()"></div><div class="battle-content"><div class="battle-field" id="battleField"><div class="enemy-side"><div class="enemy-info"><div class="char-battle-name" id="enemyName">—</div><div class="char-battle-anime" id="enemyAnime"></div><div class="hp-bar-container"><div class="hp-bar-label"><span>HP</span><span id="enemyHpNum"></span></div><div class="hp-bar-bg"><div class="hp-bar-fill" id="enemyHpBar" style="width:100%"></div></div></div><div class="status-badges" id="enemyStatus"></div><div class="enemy-team-icons" id="enemyTeamIcons"></div></div><div class="enemy-char"><img class="char-sprite" id="enemySprite" src="" alt=""></div></div><div class="player-side"><div class="player-char"><img class="char-sprite" id="playerSprite" src="" alt=""></div><div class="player-info"><div class="char-battle-name" id="playerName">—</div><div class="char-battle-anime" id="playerAnime"></div><div class="hp-bar-container"><div class="hp-bar-label"><span>HP</span><span id="playerHpNum"></span></div><div class="hp-bar-bg"><div class="hp-bar-fill" id="playerHpBar" style="width:100%"></div></div></div><div class="status-badges" id="playerStatus"></div><div class="player-team-icons" id="playerTeamIcons"></div></div></div></div><div class="battle-panel"><div class="battle-actions" id="battleActions"></div><div class="switch-section" id="switchSection"></div></div></div></div><button class="log-toggle-btn" id="logToggleBtn" onclick="toggleLog()">📜<span class="log-badge" id="logNewBadge" style="display:none">0</span></button></div>
 
 <div class="modal-overlay" id="modal"><div class="modal-box"><h3 id="modalTitle">Info</h3><p id="modalMsg"></p><button onclick="closeModal()">OK</button></div></div>
 
 <script>
-// ============================================
-// ===== ALL EXISTING CODE (3v3 SYSTEM) =====
-// ============================================
-const FAMOUS_CHARACTERS={
-  "goku":{displayName:"Son Goku",anime:"Dragon Ball",stats:{hp:230,atk:180,def:140,spAtk:190,spDef:145,spd:185},moves:[{name:"Kamehameha",power:90,acc:95,type:"special"},{name:"Genki Dama",power:150,acc:70,type:"special"},{name:"Soco Divino",power:80,acc:100,type:"physical"},{name:"Ultra Instinto",power:0,acc:100,type:"status",effect:{buff:"spd",amount:80,turns:3}}]},
-  "vegeta":{displayName:"Vegeta",anime:"Dragon Ball",stats:{hp:220,atk:185,def:150,spAtk:185,spDef:140,spd:175},moves:[{name:"Final Flash",power:120,acc:85,type:"special"},{name:"Galick Ho",power:85,acc:95,type:"special"},{name:"Big Bang Attack",power:95,acc:90,type:"special"},{name:"Orgulho Saiyajin",power:0,acc:100,type:"status",effect:{buff:"atk",amount:60,turns:3}}]},
-  "naruto uzumaki":{displayName:"Naruto Uzumaki",anime:"Naruto",stats:{hp:240,atk:170,def:145,spAtk:180,spDef:150,spd:180},moves:[{name:"Rasengan",power:85,acc:95,type:"special"},{name:"Rasenshuriken",power:130,acc:80,type:"special"},{name:"Modo Kurama",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Kage Bunshin",power:75,acc:100,type:"physical"}]},
-  "sasuke uchiha":{displayName:"Sasuke Uchiha",anime:"Naruto",stats:{hp:215,atk:185,def:140,spAtk:190,spDef:145,spd:185},moves:[{name:"Chidori",power:90,acc:95,type:"special"},{name:"Amaterasu",power:110,acc:85,type:"special",effect:{status:"burn",chance:80}},{name:"Susano'o",power:0,acc:100,type:"status",effect:{buff:"def",amount:70,turns:3}},{name:"Kirin",power:140,acc:75,type:"special"}]},
-  "monkey d. luffy":{displayName:"Monkey D. Luffy",anime:"One Piece",stats:{hp:250,atk:185,def:155,spAtk:160,spDef:140,spd:175},moves:[{name:"Red Hawk",power:95,acc:95,type:"physical",effect:{status:"burn",chance:30}},{name:"Bajrang Gun",power:150,acc:70,type:"physical"},{name:"Gear 5",power:0,acc:100,type:"status",effect:{buff:"all",amount:50,turns:3}},{name:"Gatling",power:65,acc:100,type:"physical"}]},
-  "roronoa zoro":{displayName:"Roronoa Zoro",anime:"One Piece",stats:{hp:230,atk:195,def:160,spAtk:120,spDef:145,spd:165},moves:[{name:"Sanzen Sekai",power:130,acc:80,type:"physical"},{name:"Shishi Sonson",power:100,acc:90,type:"physical"},{name:"Ashura",power:0,acc:100,type:"status",effect:{buff:"atk",amount:80,turns:2}},{name:"Tatsu Maki",power:75,acc:95,type:"physical"}]},
-  "gojo satoru":{displayName:"Gojo Satoru",anime:"Jujutsu Kaisen",stats:{hp:230,atk:170,def:180,spAtk:200,spDef:185,spd:190},moves:[{name:"Hollow Purple",power:140,acc:80,type:"special"},{name:"Blue",power:85,acc:95,type:"special"},{name:"Infinito",power:0,acc:100,type:"status",effect:{buff:"def",amount:100,turns:2}},{name:"Unlimited Void",power:120,acc:90,type:"special",effect:{status:"stun",chance:60}}]},
-  "ichigo kurosaki":{displayName:"Ichigo Kurosaki",anime:"Bleach",stats:{hp:235,atk:190,def:150,spAtk:185,spDef:145,spd:180},moves:[{name:"Getsuga Tenshou",power:95,acc:95,type:"special"},{name:"Mugetsu",power:160,acc:65,type:"special"},{name:"Bankai",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Cero",power:100,acc:90,type:"special"}]},
-  "levi ackerman":{displayName:"Levi Ackerman",anime:"Attack on Titan",stats:{hp:185,atk:190,def:140,spAtk:145,spDef:135,spd:200},moves:[{name:"Giratória",power:120,acc:90,type:"physical"},{name:"Corte Nuca",power:95,acc:95,type:"physical"},{name:"Instinto",power:0,acc:100,type:"status",effect:{buff:"spd",amount:70,turns:3}},{name:"DME",power:75,acc:100,type:"physical"}]},
-  "saitama":{displayName:"Saitama",anime:"One Punch Man",stats:{hp:255,atk:255,def:200,spAtk:200,spDef:200,spd:220},moves:[{name:"Soco Normal",power:120,acc:100,type:"physical"},{name:"Soco Sério",power:200,acc:80,type:"physical"},{name:"Série de Socos",power:80,acc:100,type:"physical"},{name:"Tédio",power:0,acc:100,type:"status",effect:{buff:"def",amount:30,turns:1}}]},
-  "tanjiro kamado":{displayName:"Tanjiro Kamado",anime:"Demon Slayer",stats:{hp:210,atk:175,def:150,spAtk:165,spDef:155,spd:170},moves:[{name:"Hinokami Kagura",power:100,acc:90,type:"special",effect:{status:"burn",chance:30}},{name:"Água 10ª",power:90,acc:95,type:"special"},{name:"Sol 13ª",power:140,acc:75,type:"special"},{name:"Olfato",power:0,acc:100,type:"status",effect:{buff:"atk",amount:50,turns:3}}]},
-  "all might":{displayName:"All Might",anime:"My Hero Academia",stats:{hp:250,atk:200,def:175,spAtk:160,spDef:155,spd:170},moves:[{name:"United States",power:160,acc:70,type:"physical"},{name:"Detroit Smash",power:95,acc:95,type:"physical"},{name:"Texas Smash",power:80,acc:100,type:"physical"},{name:"Symbol",power:0,acc:100,type:"status",effect:{buff:"atk",amount:70,turns:3}}]},
-  "killua zoldyck":{displayName:"Killua Zoldyck",anime:"Hunter x Hunter",stats:{hp:195,atk:175,def:135,spAtk:180,spDef:140,spd:195},moves:[{name:"Godspeed",power:100,acc:95,type:"physical"},{name:"Thunderbolt",power:90,acc:95,type:"special",effect:{status:"stun",chance:30}},{name:"Speed Mode",power:0,acc:100,type:"status",effect:{buff:"spd",amount:90,turns:2}},{name:"Garras",power:75,acc:100,type:"physical"}]},
-  "natsu dragneel":{displayName:"Natsu Dragneel",anime:"Fairy Tail",stats:{hp:225,atk:185,def:145,spAtk:185,spDef:140,spd:170},moves:[{name:"Rugido Dragão",power:90,acc:95,type:"special",effect:{status:"burn",chance:40}},{name:"Dragon Force",power:130,acc:85,type:"physical"},{name:"Dragon Mode",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Chamas",power:100,acc:90,type:"special",effect:{status:"burn",chance:30}}]},
-  "kaneki ken":{displayName:"Kaneki Ken",anime:"Tokyo Ghoul",stats:{hp:220,atk:180,def:155,spAtk:170,spDef:145,spd:175},moves:[{name:"Kagune",power:95,acc:95,type:"physical"},{name:"Kakuja",power:130,acc:80,type:"physical"},{name:"Regeneração",power:0,acc:100,type:"status",effect:{heal:30}},{name:"Dragon",power:140,acc:75,type:"special"}]},
-  "meliodas":{displayName:"Meliodas",anime:"Seven Deadly Sins",stats:{hp:235,atk:190,def:155,spAtk:185,spDef:150,spd:180},moves:[{name:"Full Counter",power:0,acc:100,type:"status",effect:{buff:"spDef",amount:100,turns:1}},{name:"Revenge Counter",power:140,acc:80,type:"physical"},{name:"Kami Chigiri",power:90,acc:95,type:"physical"},{name:"Demônio",power:0,acc:100,type:"status",effect:{buff:"atk",amount:70,turns:3}}]},
-  "asta":{displayName:"Asta",anime:"Black Clover",stats:{hp:225,atk:190,def:155,spAtk:100,spDef:170,spd:175},moves:[{name:"Demon Slayer",power:100,acc:90,type:"physical"},{name:"Black Divider",power:120,acc:85,type:"physical"},{name:"Devil Union",power:0,acc:100,type:"status",effect:{buff:"all",amount:50,turns:3}},{name:"Black Slash",power:80,acc:100,type:"physical"}]}
-};
+// ==========================================
+// ALL EXISTING 3v3 CODE (identical to Part 1)
+// ==========================================
+const FAMOUS_CHARACTERS={"goku":{displayName:"Son Goku",anime:"Dragon Ball",stats:{hp:230,atk:180,def:140,spAtk:190,spDef:145,spd:185},moves:[{name:"Kamehameha",power:90,acc:95,type:"special"},{name:"Genki Dama",power:150,acc:70,type:"special"},{name:"Soco Divino",power:80,acc:100,type:"physical"},{name:"Ultra Instinto",power:0,acc:100,type:"status",effect:{buff:"spd",amount:80,turns:3}}]},"vegeta":{displayName:"Vegeta",anime:"Dragon Ball",stats:{hp:220,atk:185,def:150,spAtk:185,spDef:140,spd:175},moves:[{name:"Final Flash",power:120,acc:85,type:"special"},{name:"Galick Ho",power:85,acc:95,type:"special"},{name:"Big Bang Attack",power:95,acc:90,type:"special"},{name:"Orgulho Saiyajin",power:0,acc:100,type:"status",effect:{buff:"atk",amount:60,turns:3}}]},"naruto uzumaki":{displayName:"Naruto Uzumaki",anime:"Naruto",stats:{hp:240,atk:170,def:145,spAtk:180,spDef:150,spd:180},moves:[{name:"Rasengan",power:85,acc:95,type:"special"},{name:"Rasenshuriken",power:130,acc:80,type:"special"},{name:"Modo Kurama",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Kage Bunshin",power:75,acc:100,type:"physical"}]},"sasuke uchiha":{displayName:"Sasuke Uchiha",anime:"Naruto",stats:{hp:215,atk:185,def:140,spAtk:190,spDef:145,spd:185},moves:[{name:"Chidori",power:90,acc:95,type:"special"},{name:"Amaterasu",power:110,acc:85,type:"special",effect:{status:"burn",chance:80}},{name:"Susano'o",power:0,acc:100,type:"status",effect:{buff:"def",amount:70,turns:3}},{name:"Kirin",power:140,acc:75,type:"special"}]},"monkey d. luffy":{displayName:"Monkey D. Luffy",anime:"One Piece",stats:{hp:250,atk:185,def:155,spAtk:160,spDef:140,spd:175},moves:[{name:"Red Hawk",power:95,acc:95,type:"physical",effect:{status:"burn",chance:30}},{name:"Bajrang Gun",power:150,acc:70,type:"physical"},{name:"Gear 5",power:0,acc:100,type:"status",effect:{buff:"all",amount:50,turns:3}},{name:"Gatling",power:65,acc:100,type:"physical"}]},"roronoa zoro":{displayName:"Roronoa Zoro",anime:"One Piece",stats:{hp:230,atk:195,def:160,spAtk:120,spDef:145,spd:165},moves:[{name:"Sanzen Sekai",power:130,acc:80,type:"physical"},{name:"Shishi Sonson",power:100,acc:90,type:"physical"},{name:"Ashura",power:0,acc:100,type:"status",effect:{buff:"atk",amount:80,turns:2}},{name:"Tatsu Maki",power:75,acc:95,type:"physical"}]},"gojo satoru":{displayName:"Gojo Satoru",anime:"Jujutsu Kaisen",stats:{hp:230,atk:170,def:180,spAtk:200,spDef:185,spd:190},moves:[{name:"Hollow Purple",power:140,acc:80,type:"special"},{name:"Blue",power:85,acc:95,type:"special"},{name:"Infinito",power:0,acc:100,type:"status",effect:{buff:"def",amount:100,turns:2}},{name:"Unlimited Void",power:120,acc:90,type:"special",effect:{status:"stun",chance:60}}]},"ichigo kurosaki":{displayName:"Ichigo Kurosaki",anime:"Bleach",stats:{hp:235,atk:190,def:150,spAtk:185,spDef:145,spd:180},moves:[{name:"Getsuga Tenshou",power:95,acc:95,type:"special"},{name:"Mugetsu",power:160,acc:65,type:"special"},{name:"Bankai",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Cero",power:100,acc:90,type:"special"}]},"levi ackerman":{displayName:"Levi Ackerman",anime:"Attack on Titan",stats:{hp:185,atk:190,def:140,spAtk:145,spDef:135,spd:200},moves:[{name:"Giratória",power:120,acc:90,type:"physical"},{name:"Corte Nuca",power:95,acc:95,type:"physical"},{name:"Instinto",power:0,acc:100,type:"status",effect:{buff:"spd",amount:70,turns:3}},{name:"DME",power:75,acc:100,type:"physical"}]},"saitama":{displayName:"Saitama",anime:"One Punch Man",stats:{hp:255,atk:255,def:200,spAtk:200,spDef:200,spd:220},moves:[{name:"Soco Normal",power:120,acc:100,type:"physical"},{name:"Soco Sério",power:200,acc:80,type:"physical"},{name:"Série de Socos",power:80,acc:100,type:"physical"},{name:"Tédio",power:0,acc:100,type:"status",effect:{buff:"def",amount:30,turns:1}}]},"tanjiro kamado":{displayName:"Tanjiro Kamado",anime:"Demon Slayer",stats:{hp:210,atk:175,def:150,spAtk:165,spDef:155,spd:170},moves:[{name:"Hinokami Kagura",power:100,acc:90,type:"special",effect:{status:"burn",chance:30}},{name:"Água 10ª",power:90,acc:95,type:"special"},{name:"Sol 13ª",power:140,acc:75,type:"special"},{name:"Olfato",power:0,acc:100,type:"status",effect:{buff:"atk",amount:50,turns:3}}]},"all might":{displayName:"All Might",anime:"My Hero Academia",stats:{hp:250,atk:200,def:175,spAtk:160,spDef:155,spd:170},moves:[{name:"United States",power:160,acc:70,type:"physical"},{name:"Detroit Smash",power:95,acc:95,type:"physical"},{name:"Texas Smash",power:80,acc:100,type:"physical"},{name:"Symbol",power:0,acc:100,type:"status",effect:{buff:"atk",amount:70,turns:3}}]},"killua zoldyck":{displayName:"Killua Zoldyck",anime:"Hunter x Hunter",stats:{hp:195,atk:175,def:135,spAtk:180,spDef:140,spd:195},moves:[{name:"Godspeed",power:100,acc:95,type:"physical"},{name:"Thunderbolt",power:90,acc:95,type:"special",effect:{status:"stun",chance:30}},{name:"Speed Mode",power:0,acc:100,type:"status",effect:{buff:"spd",amount:90,turns:2}},{name:"Garras",power:75,acc:100,type:"physical"}]},"natsu dragneel":{displayName:"Natsu Dragneel",anime:"Fairy Tail",stats:{hp:225,atk:185,def:145,spAtk:185,spDef:140,spd:170},moves:[{name:"Rugido Dragão",power:90,acc:95,type:"special",effect:{status:"burn",chance:40}},{name:"Dragon Force",power:130,acc:85,type:"physical"},{name:"Dragon Mode",power:0,acc:100,type:"status",effect:{buff:"all",amount:45,turns:3}},{name:"Chamas",power:100,acc:90,type:"special",effect:{status:"burn",chance:30}}]},"kaneki ken":{displayName:"Kaneki Ken",anime:"Tokyo Ghoul",stats:{hp:220,atk:180,def:155,spAtk:170,spDef:145,spd:175},moves:[{name:"Kagune",power:95,acc:95,type:"physical"},{name:"Kakuja",power:130,acc:80,type:"physical"},{name:"Regeneração",power:0,acc:100,type:"status",effect:{heal:30}},{name:"Dragon",power:140,acc:75,type:"special"}]},"meliodas":{displayName:"Meliodas",anime:"Seven Deadly Sins",stats:{hp:235,atk:190,def:155,spAtk:185,spDef:150,spd:180},moves:[{name:"Full Counter",power:0,acc:100,type:"status",effect:{buff:"spDef",amount:100,turns:1}},{name:"Revenge Counter",power:140,acc:80,type:"physical"},{name:"Kami Chigiri",power:90,acc:95,type:"physical"},{name:"Demônio",power:0,acc:100,type:"status",effect:{buff:"atk",amount:70,turns:3}}]},"asta":{displayName:"Asta",anime:"Black Clover",stats:{hp:225,atk:190,def:155,spAtk:100,spDef:170,spd:175},moves:[{name:"Demon Slayer",power:100,acc:90,type:"physical"},{name:"Black Divider",power:120,acc:85,type:"physical"},{name:"Devil Union",power:0,acc:100,type:"status",effect:{buff:"all",amount:50,turns:3}},{name:"Black Slash",power:80,acc:100,type:"physical"}]}};
 const CL={};for(const[k,v]of Object.entries(FAMOUS_CHARACTERS)){CL[k.toLowerCase()]=v;CL[v.displayName.toLowerCase()]=v}
-
 const RARITIES=[{name:"Common",weight:40,multiplier:.6},{name:"Uncommon",weight:25,multiplier:.75},{name:"Rare",weight:15,multiplier:.9},{name:"Super Rare",weight:10,multiplier:1},{name:"Ultra Rare",weight:5,multiplier:1.15},{name:"Legendary",weight:3,multiplier:1.3},{name:"Mythic",weight:2,multiplier:1.5}];
-const CONDS=["Nova","Pouco Usada","Usada","Desgastada","Muito Desgastada"];
-const RO=RARITIES.map(r=>r.name);
+const CONDS=["Nova","Pouco Usada","Usada","Desgastada","Muito Desgastada"];const RO=RARITIES.map(r=>r.name);
 let gs={coins:+localStorage.getItem('dc')||0,coll:JSON.parse(localStorage.getItem('dcoll')||'[]'),team:[null,null,null],savesLeft:0,roll:[],rolling:false};
 function save(){localStorage.setItem('dc',gs.coins);localStorage.setItem('dcoll',JSON.stringify(gs.coll));document.getElementById('coins').textContent=gs.coins}
-
 async function fetchChars(n=5){const ch=[];const seen=new Set();const ac={};let att=0;while(ch.length<n&&att<8){att++;const pg=Math.floor(Math.random()*2000)+1;const q=`query($p:Int){Page(page:$p,perPage:${n*3}){characters{id name{full}image{large}media(sort:POPULARITY_DESC,perPage:1){nodes{title{romaji}}}}}}`;try{const r=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q,variables:{p:pg}})});const d=await r.json();const ls=(d?.data?.Page?.characters||[]).sort(()=>Math.random()-.5);for(const c of ls){if(ch.length>=n)break;if(!c.image?.large||seen.has(c.id))continue;const an=c.media?.nodes?.[0]?.title?.romaji||'Anime';const ak=an.toLowerCase();if((ac[ak]||0)>=2)continue;seen.add(c.id);ac[ak]=(ac[ak]||0)+1;ch.push({id:c.id,name:c.name?.full||'Unknown',image:c.image.large,anime:an})}}catch(e){}}while(ch.length<n)ch.push({id:Math.random()*99999|0,name:"Char #"+Math.floor(Math.random()*9999),image:"https://via.placeholder.com/225x350/16161f/6d5acd?text=?",anime:"Anime"});return ch}
 function rRarity(){const t=RARITIES.reduce((s,r)=>s+r.weight,0);let rn=Math.random()*t;for(const r of RARITIES){rn-=r.weight;if(rn<=0)return r}return RARITIES[0]}
 function rCond(){return CONDS[Math.floor(Math.random()*CONDS.length)]}
 function getBD(name,rar){const k=name.toLowerCase().trim();let f=CL[k];if(!f)for(const[x,v]of Object.entries(CL)){if(k.includes(x)||x.includes(k)){f=v;break}}if(!f){const fn=k.split(' ')[0];if(fn.length>2)for(const[x,v]of Object.entries(CL)){if(x.includes(fn)){f=v;break}}}const m=(RARITIES.find(r=>r.name===rar.name)||RARITIES[0]).multiplier;if(f)return{stats:{hp:Math.round(f.stats.hp*m),atk:Math.round(f.stats.atk*m),def:Math.round(f.stats.def*m),spAtk:Math.round(f.stats.spAtk*m),spDef:Math.round(f.stats.spDef*m),spd:Math.round(f.stats.spd*m)},moves:f.moves,known:true};const b=80+Math.floor(Math.random()*40);return{stats:{hp:Math.round((b+50+Math.random()*60)*m),atk:Math.round((b+Math.random()*50)*m),def:Math.round((b+Math.random()*50)*m),spAtk:Math.round((b+Math.random()*50)*m),spDef:Math.round((b+Math.random()*50)*m),spd:Math.round((b+Math.random()*50)*m)},moves:gMoves(),known:false}}
 function gMoves(){return[{name:"Soco",power:80,acc:95,type:"physical"},{name:"Energia",power:85,acc:90,type:"special"},{name:"Explosão",power:100,acc:85,type:"special"},{name:"Foco",power:0,acc:100,type:"status",effect:{buff:"atk",amount:50,turns:3}},{name:"Defesa",power:0,acc:100,type:"status",effect:{buff:"def",amount:60,turns:3}},{name:"Raio",power:90,acc:90,type:"special"},{name:"Final",power:120,acc:80,type:"special"},{name:"Cura",power:0,acc:100,type:"status",effect:{heal:20}}].sort(()=>Math.random()-.5).slice(0,4)}
-
 function showSection(n){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));document.getElementById('sec-'+n).classList.add('active');event.target.classList.add('active');if(n==='collection')renderColl();if(n==='duel')renderPicker();if(n==='ygo')ygoRenderDeckBuilder()}
-
 async function rollCards(){if(gs.rolling)return;gs.rolling=true;const btn=document.getElementById('rollBtn');btn.disabled=true;btn.textContent='⏳ Rolando...';document.getElementById('rollResults').innerHTML='<div class="loading-spinner"></div>';const ch=await fetchChars(5);gs.roll=[];gs.savesLeft=2;for(const c of ch){const ra=rRarity();const co=RO.indexOf(ra.name)>=3?rCond():'Nova';const bd=getBD(c.name,ra);gs.roll.push({...c,rarity:ra.name,condition:co,...bd,saved:false,uid:Date.now()+'_'+Math.random().toString(36).substr(2,6)})}renderRoll();btn.disabled=false;btn.textContent='🎲 Rolar 5 cartas';gs.rolling=false;document.getElementById('rollSaves').textContent=`Guardas: ${gs.savesLeft}/2`}
 function renderRoll(){const c$=document.getElementById('rollResults');c$.innerHTML='';for(let i=0;i<gs.roll.length;i++){const c=gs.roll[i];const rc='rarity-'+c.rarity.toLowerCase().replace(/\s/g,'-');c$.innerHTML+=`<div class="card ${c.saved?'selected-card':''}"><button class="save-btn ${c.saved?'saved':''}" onclick="saveCard(${i})">${c.saved?'✓':'+'}</button><img class="card-img" src="${c.image}" onerror="this.src='https://via.placeholder.com/225x350/16161f/6d5acd?text=?'"><div class="card-info"><div class="card-name">${c.name}</div><div class="card-anime">${c.anime}</div><span class="card-rarity ${rc}">${c.rarity}</span><div class="card-stats-mini">⚔${c.stats.atk} 🛡${c.stats.def} 💨${c.stats.spd}</div></div></div>`}}
 function saveCard(i){const c=gs.roll[i];if(c.saved)return;if(gs.savesLeft<=0){showModal('Limite','Máx 2!');return}c.saved=true;gs.savesLeft--;gs.coll.push({...c});save();renderRoll();document.getElementById('rollSaves').textContent=`Guardas: ${gs.savesLeft}/2`;document.getElementById('rollInfo').textContent=`✅ ${c.name} guardado!`}
 function renderColl(){const c$=document.getElementById('collectionGrid');let f=[...gs.coll];const s=(document.getElementById('searchCollection')?.value||'').toLowerCase();const r=document.getElementById('filterRarity')?.value||'';const so=document.getElementById('sortCollection')?.value||'newest';if(s)f=f.filter(c=>c.name.toLowerCase().includes(s)||c.anime.toLowerCase().includes(s));if(r)f=f.filter(c=>c.rarity===r);if(so==='rarity')f.sort((a,b)=>RO.indexOf(b.rarity)-RO.indexOf(a.rarity));else if(so==='name')f.sort((a,b)=>a.name.localeCompare(b.name));if(!f.length){c$.innerHTML='<div class="empty-msg">Sem cartas!</div>';return}c$.innerHTML=f.map(c=>{const rc='rarity-'+c.rarity.toLowerCase().replace(/\s/g,'-');return`<div class="card"><img class="card-img" src="${c.image}" onerror="this.src='https://via.placeholder.com/225x350/16161f/6d5acd?text=?'"><div class="card-info"><div class="card-name">${c.name}</div><div class="card-anime">${c.anime}</div><span class="card-rarity ${rc}">${c.rarity}</span><div class="card-stats-mini">⚔${c.stats.atk} 🛡${c.stats.def} 💨${c.stats.spd}</div></div></div>`}).join('')}
 async function buyPack(t){const pr={basic:100,premium:300,legendary:800};const mr={basic:1,premium:2,legendary:3};if(gs.coins<pr[t]){showModal('Sem moedas','Precisa '+pr[t]+'!');return}gs.coins-=pr[t];save();const ch=await fetchChars(3);const res=[];for(const c of ch){let ra;do{ra=rRarity()}while(RO.indexOf(ra.name)<mr[t]);const bd=getBD(c.name,ra);const card={...c,rarity:ra.name,condition:'Nova',...bd,saved:true,uid:Date.now()+'_'+Math.random().toString(36).substr(2,6)};res.push(card);gs.coll.push(card)}save();document.getElementById('shopResults').innerHTML='<h3 style="width:100%;text-align:center;color:var(--green)">🎉 Obtidas!</h3>'+res.map(c=>{const rc='rarity-'+c.rarity.toLowerCase().replace(/\s/g,'-');return`<div class="card selected-card"><img class="card-img" src="${c.image}"><div class="card-info"><div class="card-name">${c.name}</div><span class="card-rarity ${rc}">${c.rarity}</span></div></div>`}).join('')}
-
 function renderPicker(){const c$=document.getElementById('teamPicker');if(!gs.coll.length){c$.innerHTML='<div class="empty-msg">Sem cartas!</div>';return}c$.innerHTML=gs.coll.map((c,i)=>{const inT=gs.team.some(t=>t&&t.uid===c.uid);const rc='rarity-'+c.rarity.toLowerCase().replace(/\s/g,'-');return`<div class="card ${inT?'selected-card':''}" onclick="togTeam(${i})" style="${inT?'opacity:.5':''}"><img class="card-img" src="${c.image}" onerror="this.src='https://via.placeholder.com/225x350/16161f/6d5acd?text=?'"><div class="card-info"><div class="card-name">${c.name}</div><span class="card-rarity ${rc}">${c.rarity}</span><div class="card-stats-mini">HP${c.stats.hp} ⚔${c.stats.atk} 💨${c.stats.spd}</div></div></div>`}).join('');renderSlots()}
 function togTeam(i){const c=gs.coll[i];const ti=gs.team.findIndex(t=>t&&t.uid===c.uid);if(ti>=0)gs.team[ti]=null;else{const ei=gs.team.findIndex(t=>!t);if(ei<0){showModal('Cheio','Remova uma.');return}gs.team[ei]={...c}}renderPicker()}
 function remTeam(i){gs.team[i]=null;renderPicker()}
 function renderSlots(){for(let i=0;i<3;i++){const s=document.getElementById('slot'+i),c=gs.team[i];if(c){s.className='team-slot filled';s.innerHTML=`<img src="${c.image}"><div class="slot-name">${c.name}</div><div class="remove-slot" onclick="remTeam(${i})">✕</div>`}else{s.className='team-slot';s.innerHTML=`<span>Slot ${i+1}</span>`}}document.getElementById('fightBtn').disabled=gs.team.filter(Boolean).length<3}
 
-// 3v3 Battle (keep all existing code — abbreviated here for space, same as before)
+// 3v3 Battle Engine (same as Part 1 - abbreviated)
 let B=null;let BS={p:0,b:0,a:0};let logN=0;
 function mkF(d){return{...d,hp:d.stats.hp,mhp:d.stats.hp,alive:true,buffs:{},debuffs:{},fx:[]}}
 function mkBot(){const ks=Object.keys(FAMOUS_CHARACTERS);const used=new Set();const pk=[];const sh=ks.sort(()=>Math.random()-.5);for(const k of sh){if(pk.length>=3)break;const d=FAMOUS_CHARACTERS[k];if(!used.has(d.anime)){pk.push(k);used.add(d.anime)}}while(pk.length<3)pk.push(sh[pk.length]);return pk.map(k=>{const d=FAMOUS_CHARACTERS[k],ra=rRarity(),m=(RARITIES.find(r=>r.name===ra.name)||RARITIES[0]).multiplier;return{name:d.displayName,anime:d.anime,image:'',rarity:ra.name,stats:{hp:Math.round(d.stats.hp*m),atk:Math.round(d.stats.atk*m),def:Math.round(d.stats.def*m),spAtk:Math.round(d.stats.spAtk*m),spDef:Math.round(d.stats.spDef*m),spd:Math.round(d.stats.spd*m)},moves:d.moves,uid:'b_'+Date.now()+'_'+Math.random().toString(36).substr(2,5)}})}
 async function fImg(n){try{const r=await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:`query($s:String){Character(search:$s){image{large}}}`,variables:{s:n}})});const d=await r.json();return d?.data?.Character?.image?.large||null}catch(e){return null}}
-async function startBattle(){const tm=gs.team.filter(Boolean);if(tm.length<3)return;document.getElementById('fightBtn').textContent='⏳...';document.getElementById('fightBtn').disabled=true;const pt=tm.map(c=>mkF(c));const br=mkBot();for(const b of br){const img=await fImg(b.name);b.image=img||`https://via.placeholder.com/300x400/16161f/c0392b?text=${encodeURIComponent(b.name.charAt(0))}`}const bt=br.map(c=>mkF(c));B={p:{team:pt,a:0},b:{team:bt,a:0},turn:1,phase:'pt'};BS={p:0,b:0,a:0};logN=0;document.getElementById('battleLog').innerHTML='';document.getElementById('battleArena').classList.add('active');document.body.style.overflow='hidden';document.getElementById('fightBtn').textContent='⚔️ INICIAR DUELO';document.getElementById('fightBtn').disabled=false;aLog('⚔️ Duelo 3v3 começou!','system','🏟️');aLog('— Turno 1 —','turn-divider','⏱️');uUI()}
+async function startBattle(){const tm=gs.team.filter(Boolean);if(tm.length<3)return;document.getElementById('fightBtn').textContent='⏳...';document.getElementById('fightBtn').disabled=true;const pt=tm.map(c=>mkF(c));const br=mkBot();for(const b of br){const img=await fImg(b.name);b.image=img||`https://via.placeholder.com/300x400/16161f/c0392b?text=${encodeURIComponent(b.name.charAt(0))}`}const bt=br.map(c=>mkF(c));B={p:{team:pt,a:0},b:{team:bt,a:0},turn:1,phase:'pt'};BS={p:0,b:0,a:0};logN=0;document.getElementById('battleLog').innerHTML='';document.getElementById('battleArena').classList.add('active');document.body.style.overflow='hidden';document.getElementById('fightBtn').textContent='⚔️ INICIAR DUELO';document.getElementById('fightBtn').disabled=false;aLog('⚔️ Duelo 3v3!','system','🏟️');aLog('— Turno 1 —','turn-divider','⏱️');uUI()}
 function gA(s){return B[s].team[B[s].a]}
-function uUI(){const p=gA('p'),e=gA('b');document.getElementById('playerName').textContent=p.name;document.getElementById('playerAnime').textContent=p.anime||'';const ps=document.getElementById('playerSprite');ps.src=p.image;ps.onerror=function(){this.src='https://via.placeholder.com/300x400/16161f/6d5acd?text='+encodeURIComponent(p.name.charAt(0))};uHP('player',p);document.getElementById('enemyName').textContent=e.name;document.getElementById('enemyAnime').textContent=e.anime||'';const es=document.getElementById('enemySprite');es.src=e.image;es.onerror=function(){this.src='https://via.placeholder.com/300x400/16161f/c0392b?text='+encodeURIComponent(e.name.charAt(0))};uHP('enemy',e);document.getElementById('turnCount').textContent=B.turn;document.getElementById('logTurnBadge').textContent='T'+B.turn;rTI('player');rTI('enemy');rSB('player',p);rSB('enemy',e);rAct();uSt()}
+function uUI(){const p=gA('p'),e=gA('b');document.getElementById('playerName').textContent=p.name;document.getElementById('playerAnime').textContent=p.anime||'';document.getElementById('playerSprite').src=p.image;uHP('player',p);document.getElementById('enemyName').textContent=e.name;document.getElementById('enemyAnime').textContent=e.anime||'';document.getElementById('enemySprite').src=e.image;uHP('enemy',e);document.getElementById('turnCount').textContent=B.turn;document.getElementById('logTurnBadge').textContent='T'+B.turn;rTI('player');rTI('enemy');rSB('player',p);rSB('enemy',e);rAct();uSt()}
 function uHP(s,f){const pc=Math.max(0,(f.hp/f.mhp)*100);const bar=document.getElementById(s+'HpBar');bar.style.width=pc+'%';bar.className='hp-bar-fill'+(pc<=25?' low':pc<=50?' medium':'');document.getElementById(s+'HpNum').textContent=`${Math.max(0,f.hp)}/${f.mhp}`}
 function rTI(s){const k=s==='player'?'p':'b';document.getElementById((s==='player'?'player':'enemy')+'TeamIcons').innerHTML=B[k].team.map(f=>`<div class="team-icon ${!f.alive?'fainted':''}"><img src="${f.image}" onerror="this.style.display='none'"></div>`).join('')}
 function rSB(s,f){const c$=document.getElementById((s==='player'?'player':'enemy')+'Status');c$.innerHTML=f.fx.map(x=>`<span class="status-badge status-${x.type}">${x.type}</span>`).join('');for(const[st,d]of Object.entries(f.buffs||{})){if(d.turns>0)c$.innerHTML+=`<span class="status-badge status-boost">↑${st}</span>`}}
-function rAct(){const a$=document.getElementById('battleActions'),s$=document.getElementById('switchSection');const p=gA('p');if(B.phase!=='pt'||!p.alive){a$.innerHTML='<p style="color:var(--text3);text-align:center;width:100%">Aguarde...</p>';s$.innerHTML='';return}a$.innerHTML=p.moves.map((m,i)=>{const tc='type-'+(m.type==='physical'?'physical':m.type==='special'?'special':'status');const pw=m.power>0?`${m.power}pw ${m.acc}%`:`${m.acc}%`;return`<button class="move-btn ${tc}" onclick="pM(${i})">${m.name}<span class="move-power">${pw}</span><span class="move-type-tag">${m.type}</span></button>`}).join('');s$.innerHTML='<span style="color:var(--text3);font-size:.72rem;width:100%;text-align:center">🔄 Trocar:</span>'+B.p.team.map((f,i)=>{if(i===B.p.a||!f.alive)return`<button class="switch-btn" disabled><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span><span class="sw-hp" style="color:${!f.alive?'var(--red)':'var(--text3)'}">${f.alive?'atual':'KO'}</span></button>`;return`<button class="switch-btn" onclick="pSw(${i})"><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span><span class="sw-hp" style="color:var(--green)">${Math.round(f.hp/f.mhp*100)}%</span></button>`}).join('')}
+function rAct(){const a$=document.getElementById('battleActions'),s$=document.getElementById('switchSection');const p=gA('p');if(B.phase!=='pt'||!p.alive){a$.innerHTML='<p style="color:var(--text3);text-align:center;width:100%">Aguarde...</p>';s$.innerHTML='';return}a$.innerHTML=p.moves.map((m,i)=>{const tc='type-'+(m.type==='physical'?'physical':m.type==='special'?'special':'status');const pw=m.power>0?`${m.power}pw ${m.acc}%`:`${m.acc}%`;return`<button class="move-btn ${tc}" onclick="pM(${i})">${m.name}<span class="move-power">${pw}</span><span class="move-type-tag">${m.type}</span></button>`}).join('');s$.innerHTML='<span style="color:var(--text3);font-size:.72rem;width:100%;text-align:center">🔄</span>'+B.p.team.map((f,i)=>{if(i===B.p.a||!f.alive)return`<button class="switch-btn" disabled><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span></button>`;return`<button class="switch-btn" onclick="pSw(${i})"><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span><span class="sw-hp" style="color:var(--green)">${Math.round(f.hp/f.mhp*100)}%</span></button>`}).join('')}
 function uSt(){document.getElementById('statTurn').textContent=B.turn;document.getElementById('statYouDmg').textContent=BS.p;document.getElementById('statBotDmg').textContent=BS.b;document.getElementById('statActions').textContent=BS.a;const mx=Math.max(BS.p,BS.b,1);document.getElementById('statYouBar').style.width=(BS.p/mx*100)+'%';document.getElementById('statBotBar').style.width=(BS.b/mx*100)+'%';const c=document.getElementById('statComp');if(BS.p>BS.b)c.innerHTML=`<span class="leading">Você +${BS.p-BS.b}</span>`;else if(BS.b>BS.p)c.innerHTML=`<span class="losing">Bot +${BS.b-BS.p}</span>`;else c.innerHTML=`<span class="tied">Empate</span>`}
 function cDmg(a,d,m){if(m.power<=0)return{dmg:0,crit:false};const ak=m.type==='physical'?eS(a,'atk'):eS(a,'spAtk');const df=m.type==='physical'?eS(d,'def'):eS(d,'spDef');const b=(22*m.power*ak/Math.max(df,1))/50+2;const r=.85+Math.random()*.15;const c=Math.random()<.0625?1.5:1;return{dmg:Math.round(b*r*c),crit:c>1}}
 function eS(f,s){let v=f.stats[s];if(f.buffs?.[s])v+=f.buffs[s].amount;if(f.debuffs?.[s])v-=f.debuffs[s].amount;if(f.buffs?.all)v+=f.buffs.all.amount;if(f.debuffs?.all)v-=f.debuffs.all.amount;return Math.max(v,1)}
 function aC(m,a,d){let ac=m.acc;if(d.buffs?.spd)ac-=10;if(a.debuffs?.acc)ac-=a.debuffs.acc.amount;return Math.random()*100<ac}
-async function doM(a,d,m,side){BS.a++;if(!aC(m,a,d)){aLog(`${a.name}: ${m.name} — errou!`,side==='p'?'player':'enemy','💨');await dl(800);return}if(m.power>0){const r=cDmg(a,d,m);d.hp=Math.max(0,d.hp-r.dmg);if(side==='p')BS.p+=r.dmg;else BS.b+=r.dmg;aLog(`${a.name}: ${m.name}${r.crit?' CRIT':''} → ${r.dmg}`,r.crit?'crit':(side==='p'?'player':'enemy'),r.crit?'💥':'⚔️',`${d.name}: ${Math.max(0,d.hp)}/${d.mhp}`);const ts=document.getElementById(side==='p'?'enemySprite':'playerSprite');ts.classList.add('shake');setTimeout(()=>ts.classList.remove('shake'),500);uHP('player',gA('p'));uHP('enemy',gA('b'));await dl(900);if(m.effect?.status&&Math.random()*100<(m.effect.chance||100)){d.fx.push({type:m.effect.status,turns:3});aLog(`${d.name}: ${m.effect.status}!`,'system','⚠️')}if(d.hp<=0){d.alive=false;d.hp=0;aLog(`${d.name} derrotado!`,'ko','💀');const fs=document.getElementById(side==='p'?'enemySprite':'playerSprite');fs.classList.add('faint-anim');await dl(700);fs.classList.remove('faint-anim')}}if(m.type==='status'||(!m.power&&m.effect)){const e=m.effect;if(e?.buff){if(!a.buffs)a.buffs={};if(e.buff==='all')a.buffs.all={amount:e.amount,turns:e.turns};else a.buffs[e.buff]={amount:e.amount,turns:e.turns};aLog(`${a.name}: ${m.name} stats ↑`,'buff','⬆️');if(e.selfDmg){const dm=Math.round(a.mhp*e.selfDmg/100);a.hp=Math.max(1,a.hp-dm)}}if(e?.debuff){if(!d.debuffs)d.debuffs={};if(e.debuff==='all')d.debuffs.all={amount:e.amount,turns:e.turns};else d.debuffs[e.debuff]={amount:e.amount,turns:e.turns}}if(e?.heal){const h=Math.round(a.mhp*e.heal/100);a.hp=Math.min(a.mhp,a.hp+h);aLog(`${a.name}: +${h} HP`,'heal','💚')}uHP('player',gA('p'));uHP('enemy',gA('b'));await dl(700)}uSt()}
+async function doM(a,d,m,side){BS.a++;if(!aC(m,a,d)){aLog(`${a.name}: ${m.name} errou!`,side==='p'?'player':'enemy','💨');await dl(800);return}if(m.power>0){const r=cDmg(a,d,m);d.hp=Math.max(0,d.hp-r.dmg);if(side==='p')BS.p+=r.dmg;else BS.b+=r.dmg;aLog(`${a.name}: ${m.name}${r.crit?' CRIT':''} → ${r.dmg}`,r.crit?'crit':(side==='p'?'player':'enemy'),r.crit?'💥':'⚔️');const ts=document.getElementById(side==='p'?'enemySprite':'playerSprite');ts.classList.add('shake');setTimeout(()=>ts.classList.remove('shake'),500);uHP('player',gA('p'));uHP('enemy',gA('b'));await dl(900);if(m.effect?.status&&Math.random()*100<(m.effect.chance||100)){d.fx.push({type:m.effect.status,turns:3})}if(d.hp<=0){d.alive=false;d.hp=0;aLog(`${d.name} derrotado!`,'ko','💀');const fs=document.getElementById(side==='p'?'enemySprite':'playerSprite');fs.classList.add('faint-anim');await dl(700);fs.classList.remove('faint-anim')}}if(m.type==='status'||(!m.power&&m.effect)){const e=m.effect;if(e?.buff){if(!a.buffs)a.buffs={};if(e.buff==='all')a.buffs.all={amount:e.amount,turns:e.turns};else a.buffs[e.buff]={amount:e.amount,turns:e.turns};aLog(`${a.name}: stats ↑`,'buff','⬆️')}if(e?.debuff){if(!d.debuffs)d.debuffs={};if(e.debuff==='all')d.debuffs.all={amount:e.amount,turns:e.turns};else d.debuffs[e.debuff]={amount:e.amount,turns:e.turns}}if(e?.heal){const h=Math.round(a.mhp*e.heal/100);a.hp=Math.min(a.mhp,a.hp+h);aLog(`${a.name}: +${h} HP`,'heal','💚')}uHP('player',gA('p'));uHP('enemy',gA('b'));await dl(700)}uSt()}
 function pFx(f){for(const s of f.fx){if(s.type==='burn'){const d=Math.round(f.mhp*.06);f.hp=Math.max(0,f.hp-d)}if(s.type==='poison'){const d=Math.round(f.mhp*.08);f.hp=Math.max(0,f.hp-d)}s.turns--}f.fx=f.fx.filter(s=>s.turns>0);for(const[k,v]of Object.entries(f.buffs||{})){v.turns--;if(v.turns<=0)delete f.buffs[k]}for(const[k,v]of Object.entries(f.debuffs||{})){v.turns--;if(v.turns<=0)delete f.debuffs[k]}if(f.hp<=0){f.alive=false;f.hp=0}}
 function isSt(f){return f.fx.some(s=>s.type==='stun')}
 async function pM(mi){if(B.phase!=='pt')return;B.phase='x';const p=gA('p'),e=gA('b'),mv=p.moves[mi];if(isSt(p)){aLog(`${p.name} atordoado!`,'system','⚡');await dl(800)}else{const pF=eS(p,'spd')>=eS(e,'spd');if(pF){await doM(p,e,mv,'p');uUI();if(await cF())return;await bAI();uUI();if(await cF())return}else{await bAI();uUI();if(await cF())return;if(p.alive){await doM(p,e,mv,'p');uUI();if(await cF())return}}}pFx(p);pFx(gA('b'));uUI();await cF();if(B.phase!=='end'){B.turn++;aLog(`— Turno ${B.turn} —`,'turn-divider','⏱️');B.phase='pt';uUI()}}
-async function pSw(idx){if(B.phase!=='pt')return;B.phase='x';const old=gA('p');B.p.a=idx;aLog(`${old.name} → ${gA('p').name}`,'player','🔄');document.getElementById('playerSprite').classList.add('slide-in-left');setTimeout(()=>document.getElementById('playerSprite').classList.remove('slide-in-left'),500);uUI();await dl(500);await bAI();uUI();if(await cF())return;pFx(gA('p'));pFx(gA('b'));B.turn++;aLog(`— Turno ${B.turn} —`,'turn-divider','⏱️');B.phase='pt';uUI()}
-async function bAI(){const e=gA('b'),p=gA('p');if(!e.alive)return;if(isSt(e)){aLog(`${e.name} atordoado!`,'system','⚡');await dl(800);return}let best=0,bs=-Infinity;for(let i=0;i<e.moves.length;i++){const m=e.moves[i];let sc=0;if(m.power>0){const r=cDmg(e,p,m);sc=r.dmg*(m.acc/100);if(r.dmg>=p.hp)sc+=500}if(m.effect?.heal&&e.hp<e.mhp*.5)sc+=200;if(m.effect?.buff)sc+=80;sc+=Math.random()*30;if(sc>bs){bs=sc;best=i}}if(e.hp<e.mhp*.2){const sw=B.b.team.findIndex((f,i)=>f.alive&&i!==B.b.a);if(sw>=0&&Math.random()<.4){B.b.a=sw;aLog(`Bot: → ${gA('b').name}`,'enemy','🔄');document.getElementById('enemySprite').classList.add('slide-in-right');setTimeout(()=>document.getElementById('enemySprite').classList.remove('slide-in-right'),500);uUI();await dl(500);return}}await doM(e,p,e.moves[best],'b')}
-async function cF(){const e=gA('b'),p=gA('p');if(!e.alive){const nb=B.b.team.findIndex((f,i)=>f.alive&&i!==B.b.a);if(nb>=0){await dl(400);B.b.a=nb;aLog(`Bot envia ${gA('b').name}`,'enemy','🤖');document.getElementById('enemySprite').classList.add('slide-in-right');setTimeout(()=>document.getElementById('enemySprite').classList.remove('slide-in-right'),500);uUI();await dl(500)}else{await endB('p');return true}}if(!p.alive){const ap=B.p.team.filter((f,i)=>f.alive&&i!==B.p.a);if(ap.length>0){aLog(`${p.name} caiu!`,'system','⚠️');await dl(400);await fSw();return false}else{await endB('b');return true}}return false}
-function fSw(){return new Promise(r=>{B.phase='fs';document.getElementById('battleActions').innerHTML='<p style="color:var(--accent);width:100%;text-align:center;font-weight:600">⚠️ Escolha!</p>';document.getElementById('switchSection').innerHTML=B.p.team.map((f,i)=>{if(!f.alive)return'';return`<button class="switch-btn" onclick="doFS(${i})"><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span><span class="sw-hp" style="color:var(--green)">${Math.round(f.hp/f.mhp*100)}%</span></button>`}).join('');window._r=r})}
-function doFS(i){B.p.a=i;aLog(`${gA('p').name} entrou!`,'player','🔄');document.getElementById('playerSprite').classList.add('slide-in-left');setTimeout(()=>document.getElementById('playerSprite').classList.remove('slide-in-left'),500);B.phase='pt';uUI();if(window._r){window._r();window._r=null}}
-async function endB(w){B.phase='end';await dl(500);const f=document.getElementById('battleField');const ov=document.createElement('div');ov.className='battle-msg-overlay';if(w==='p'){const rw=50+Math.floor(Math.random()*50);gs.coins+=rw;save();ov.innerHTML=`<h2 style="color:var(--green)">🏆 VITÓRIA!</h2><p>+${rw} moedas</p><div class="end-stats"><div class="es"><div class="es-val" style="color:var(--blue)">${BS.p}</div><div class="es-lbl">Seu Dano</div></div><div class="es"><div class="es-val" style="color:var(--primary)">${B.turn}</div><div class="es-lbl">Turnos</div></div></div><button onclick="closeBattle()">Voltar</button>`}else{ov.innerHTML=`<h2 style="color:var(--red)">💀 DERROTA</h2><p>Tente novamente</p><button onclick="closeBattle()">Voltar</button>`}f.appendChild(ov)}
+async function pSw(idx){if(B.phase!=='pt')return;B.phase='x';B.p.a=idx;aLog(`→ ${gA('p').name}`,'player','🔄');document.getElementById('playerSprite').classList.add('slide-in-left');setTimeout(()=>document.getElementById('playerSprite').classList.remove('slide-in-left'),500);uUI();await dl(500);await bAI();uUI();if(await cF())return;pFx(gA('p'));pFx(gA('b'));B.turn++;aLog(`— Turno ${B.turn} —`,'turn-divider','⏱️');B.phase='pt';uUI()}
+async function bAI(){const e=gA('b'),p=gA('p');if(!e.alive)return;if(isSt(e)){await dl(800);return}let best=0,bs=-Infinity;for(let i=0;i<e.moves.length;i++){const m=e.moves[i];let sc=0;if(m.power>0){const r=cDmg(e,p,m);sc=r.dmg*(m.acc/100);if(r.dmg>=p.hp)sc+=500}if(m.effect?.heal&&e.hp<e.mhp*.5)sc+=200;if(m.effect?.buff)sc+=80;sc+=Math.random()*30;if(sc>bs){bs=sc;best=i}}if(e.hp<e.mhp*.2){const sw=B.b.team.findIndex((f,i)=>f.alive&&i!==B.b.a);if(sw>=0&&Math.random()<.4){B.b.a=sw;aLog(`Bot: → ${gA('b').name}`,'enemy','🔄');uUI();await dl(500);return}}await doM(e,p,e.moves[best],'b')}
+async function cF(){const e=gA('b'),p=gA('p');if(!e.alive){const nb=B.b.team.findIndex((f,i)=>f.alive&&i!==B.b.a);if(nb>=0){await dl(400);B.b.a=nb;aLog(`Bot envia ${gA('b').name}`,'enemy','🤖');uUI();await dl(500)}else{await endB('p');return true}}if(!p.alive){const ap=B.p.team.filter((f,i)=>f.alive&&i!==B.p.a);if(ap.length>0){aLog(`${p.name} caiu!`,'system','⚠️');await dl(400);await fSw();return false}else{await endB('b');return true}}return false}
+function fSw(){return new Promise(r=>{B.phase='fs';document.getElementById('battleActions').innerHTML='<p style="color:var(--accent);width:100%;text-align:center;font-weight:600">⚠️ Escolha!</p>';document.getElementById('switchSection').innerHTML=B.p.team.map((f,i)=>{if(!f.alive)return'';return`<button class="switch-btn" onclick="doFS(${i})"><img src="${f.image}" onerror="this.style.display='none'"><span>${f.name.split(' ')[0]}</span></button>`}).join('');window._r=r})}
+function doFS(i){B.p.a=i;aLog(`${gA('p').name} entrou!`,'player','🔄');B.phase='pt';uUI();if(window._r){window._r();window._r=null}}
+async function endB(w){B.phase='end';await dl(500);const f=document.getElementById('battleField');const ov=document.createElement('div');ov.className='battle-msg-overlay';if(w==='p'){const rw=50+Math.floor(Math.random()*50);gs.coins+=rw;save();ov.innerHTML=`<h2 style="color:var(--green)">🏆 VITÓRIA!</h2><p>+${rw} moedas</p><button onclick="closeBattle()">Voltar</button>`}else{ov.innerHTML=`<h2 style="color:var(--red)">💀 DERROTA</h2><button onclick="closeBattle()">Voltar</button>`}f.appendChild(ov)}
 function closeBattle(){document.getElementById('battleArena').classList.remove('active');document.body.style.overflow='';document.querySelectorAll('.battle-msg-overlay').forEach(el=>el.remove());document.getElementById('battleLogSidebar').classList.remove('open');document.getElementById('logOverlay').classList.remove('active');B=null}
-function fleeBattle(){if(B&&B.phase!=='end'){closeBattle()}}
+function fleeBattle(){if(B&&B.phase!=='end')closeBattle()}
 function aLog(msg,type='system',icon='📌',detail=''){const log=document.getElementById('battleLog');const el=document.createElement('div');let cls='log-system';if(type==='player')cls='log-player';else if(type==='enemy')cls='log-enemy';else if(type==='crit')cls='log-crit';else if(type==='ko')cls='log-ko';else if(type==='heal')cls='log-heal';else if(type==='buff')cls='log-buff';else if(type==='turn-divider')cls='log-turn-divider';const ts=new Date();const t=`${ts.getMinutes().toString().padStart(2,'0')}:${ts.getSeconds().toString().padStart(2,'0')}`;if(type==='turn-divider'){el.className=`log-entry ${cls}`;el.innerHTML=`<div class="log-entry-icon">${icon}</div><div class="log-entry-content"><div class="log-entry-text">${msg}</div></div>`}else{el.className=`log-entry ${cls}`;el.innerHTML=`<div class="log-entry-icon">${icon}</div><div class="log-entry-content"><div class="log-entry-text">${msg}</div>${detail?`<div class="log-entry-detail">${detail}</div>`:''}</div><span class="log-entry-time">${t}</span>`}log.appendChild(el);requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight})}
-function toggleLog(){const sb=document.getElementById('battleLogSidebar'),ov=document.getElementById('logOverlay');sb.classList.toggle('open');ov.classList.toggle('active');logN=0;document.getElementById('logNewBadge').style.display='none'}
+function toggleLog(){document.getElementById('battleLogSidebar').classList.toggle('open');document.getElementById('logOverlay').classList.toggle('active')}
 function dl(ms){return new Promise(r=>setTimeout(r,ms))}
 function showModal(t,m){document.getElementById('modalTitle').textContent=t;document.getElementById('modalMsg').textContent=m;document.getElementById('modal').classList.add('active')}
 function closeModal(){document.getElementById('modal').classList.remove('active')}
 
 // ============================================
-// ===== YU-GI-OH MODE — ALL NEW CODE =====
+// ===== YGO MODE V2 — SPELL/TRAP/EFFECTS =====
 // ============================================
 
-// Convert collection card to YGO card
+// ===== SPELL CARD DATABASE =====
+const SPELL_CARDS = [
+  {name:"Poder Oculto",type:"spell",desc:"Um monstro ganha +500 ATK",effect:"atkBoost",value:500,icon:"🔥"},
+  {name:"Cura Divina",type:"spell",desc:"Recupera 800 LP",effect:"healLP",value:800,icon:"💚"},
+  {name:"Destruição Total",type:"spell",desc:"Destrói o monstro com menor ATK do oponente",effect:"destroyWeakest",icon:"💀"},
+  {name:"Reforço",type:"spell",desc:"Um monstro ganha +300 ATK e +300 DEF",effect:"statBoost",atkVal:300,defVal:300,icon:"⬆️"},
+  {name:"Roubo de Energia",type:"spell",desc:"Drena 500 LP do oponente e adiciona aos seus",effect:"drain",value:500,icon:"🩸"},
+  {name:"Comprar Ganância",type:"spell",desc:"Compre 2 cartas do deck",effect:"draw",value:2,icon:"🃏"},
+  {name:"Escudo Mágico",type:"spell",desc:"Um monstro ganha +800 DEF",effect:"defBoost",value:800,icon:"🛡️"},
+  {name:"Fúria Ancestral",type:"spell",desc:"Um monstro ganha +700 ATK mas perde 300 DEF",effect:"furyBoost",atkVal:700,defVal:-300,icon:"😤"},
+  {name:"Vento Cortante",type:"spell",desc:"Destrói uma Trap setada do oponente",effect:"destroyTrap",icon:"🌪️"},
+  {name:"Ressurreição",type:"spell",desc:"Recupera 1200 LP",effect:"healLP",value:1200,icon:"✨"},
+];
+
+// ===== TRAP CARD DATABASE =====
+const TRAP_CARDS = [
+  {name:"Espelho de Força",type:"trap",desc:"Quando atacado: destrói o monstro atacante",effect:"destroyAttacker",icon:"🪞"},
+  {name:"Barreira Mágica",type:"trap",desc:"Quando atacado: nega o ataque, sem dano",effect:"negateAttack",icon:"🚫"},
+  {name:"Contra-Ataque",type:"trap",desc:"Quando atacado: atacante perde 600 ATK",effect:"weakenAttacker",value:600,icon:"⚡"},
+  {name:"Armadilha Explosiva",type:"trap",desc:"Quando atacado: oponente perde 800 LP",effect:"directDamage",value:800,icon:"💣"},
+  {name:"Absorção",type:"trap",desc:"Quando atacado: recupera 500 LP",effect:"healOnAttack",value:500,icon:"💚"},
+];
+
+// ===== CARD CONVERSION V2 =====
 function cardToYGO(card){
   const ri = RO.indexOf(card.rarity);
-  // Level based on rarity: Common=1-2, Uncommon=3, Rare=4, SR=5, UR=6, Leg=7, Mythic=8
   const levelMap = [1,3,4,5,6,7,8];
   const level = levelMap[Math.min(ri,6)] || Math.floor(Math.random()*4)+1;
-  // ATK/DEF from stats
   const atk = Math.round((card.stats.atk + card.stats.spAtk) * 5 + level * 200);
   const def = Math.round((card.stats.def + card.stats.spDef) * 4 + level * 150);
+
+  // Special effect for famous characters
+  let specialEffect = null;
+  const key = card.name.toLowerCase();
+  for(const[k,v]of Object.entries(CL)){
+    if(key.includes(k) || k.includes(key)){
+      specialEffect = getCharEffect(v.displayName);
+      break;
+    }
+  }
+
   return {
     ...card, level, ygoAtk: atk, ygoDef: def,
-    position: 'atk', // 'atk' or 'def'
-    canAttack: false, justSummoned: true
+    cardType: 'monster',
+    position: 'atk', canAttack: false, justSummoned: true,
+    faceDown: false, hasChangedPos: false,
+    specialEffect
   };
 }
 
-// YGO State
-let YGO = null;
-let ygoDeck = []; // deck builder
+function getCharEffect(name){
+  const effects = {
+    "Son Goku":{name:"Kamehameha",desc:"Ao invocar: +400 ATK",type:"onSummon",atkBoost:400},
+    "Vegeta":{name:"Orgulho Saiyajin",desc:"Ao atacar: +200 ATK temporário",type:"onAttack",atkBoost:200},
+    "Naruto Uzumaki":{name:"Kage Bunshin",desc:"Ao invocar: oponente perde 300 LP",type:"onSummon",damage:300},
+    "Sasuke Uchiha":{name:"Sharingan",desc:"Ao invocar: um monstro inimigo perde 300 ATK",type:"onSummon",enemyAtkReduce:300},
+    "Monkey D. Luffy":{name:"Gear 5",desc:"Ao invocar: +300 ATK e +200 DEF",type:"onSummon",atkBoost:300,defBoost:200},
+    "Roronoa Zoro":{name:"Santoryu",desc:"Ao atacar: dano +500",type:"onAttack",bonusDamage:500},
+    "Gojo Satoru":{name:"Infinito",desc:"Ao ser atacado: reduz dano em 50%",type:"onDefend",damageReduction:50},
+    "Ichigo Kurosaki":{name:"Bankai",desc:"Ao invocar: +500 ATK",type:"onSummon",atkBoost:500},
+    "Levi Ackerman":{name:"Ackerman",desc:"Ao atacar: ignora 300 DEF do inimigo",type:"onAttack",ignoreDefense:300},
+    "Saitama":{name:"Soco Sério",desc:"Ao atacar: dano dobrado (1 vez)",type:"onAttack",doubleDamage:true,used:false},
+    "Tanjiro Kamado":{name:"Hinokami",desc:"Ao invocar: recupera 400 LP",type:"onSummon",heal:400},
+    "All Might":{name:"Plus Ultra",desc:"Ao invocar: +600 ATK",type:"onSummon",atkBoost:600},
+    "Killua Zoldyck":{name:"Godspeed",desc:"Pode atacar 2 vezes",type:"doubleAttack"},
+    "Natsu Dragneel":{name:"Dragon Force",desc:"Ao atacar: +400 dano",type:"onAttack",bonusDamage:400},
+    "Asta":{name:"Anti-Magia",desc:"Imune a efeitos de Spell",type:"spellImmune"},
+  };
+  return effects[name] || null;
+}
 
-// Deck Builder
+// Generate random Spell/Trap from card
+function generateSpellTrap(card){
+  const ri = RO.indexOf(card.rarity);
+  if(Math.random() < 0.55){
+    // Spell
+    const spell = {...SPELL_CARDS[Math.floor(Math.random()*SPELL_CARDS.length)]};
+    // Scale by rarity
+    if(spell.value) spell.value = Math.round(spell.value * (1 + ri * 0.15));
+    if(spell.atkVal) spell.atkVal = Math.round(spell.atkVal * (1 + ri * 0.15));
+    if(spell.defVal) spell.defVal = Math.round(spell.defVal * (1 + ri * 0.1));
+    spell.uid = 'sp_' + Math.random().toString(36).substr(2,6);
+    spell.image = card.image;
+    spell.sourceName = card.name;
+    return spell;
+  } else {
+    // Trap
+    const trap = {...TRAP_CARDS[Math.floor(Math.random()*TRAP_CARDS.length)]};
+    if(trap.value) trap.value = Math.round(trap.value * (1 + ri * 0.15));
+    trap.uid = 'tr_' + Math.random().toString(36).substr(2,6);
+    trap.image = card.image;
+    trap.sourceName = card.name;
+    trap.isSet = false;
+    trap.isRevealed = false;
+    return trap;
+  }
+}
+
+// ===== YGO STATE =====
+let YGO = null;
+let ygoDeck = [];
+
+// ===== DECK BUILDER V2 =====
 function ygoRenderDeckBuilder(){
-  // Render deck slots
   const slotsEl = document.getElementById('ygoDeckSlots');
   slotsEl.innerHTML = '';
   for(let i=0;i<10;i++){
@@ -587,456 +617,569 @@ function ygoRenderDeckBuilder(){
   document.getElementById('ygoDeckCount').textContent = ygoDeck.filter(Boolean).length;
   document.getElementById('ygoStartBtn').disabled = ygoDeck.filter(Boolean).length < 10;
 
-  // Render card picker
   const pickEl = document.getElementById('ygoCardPick');
-  if(!gs.coll.length){pickEl.innerHTML='<div class="empty-msg">Sem cartas! Role algumas primeiro.</div>';return}
+  if(!gs.coll.length){pickEl.innerHTML='<div class="empty-msg">Sem cartas!</div>';return}
   pickEl.innerHTML = gs.coll.map((c,i) => {
     const inDeck = ygoDeck.some(d => d && d.uid === c.uid);
     const yc = cardToYGO(c);
+    const st = generateSpellTrap(c);
     return `<div class="ygo-pick-card ${inDeck?'in-deck':''}" onclick="ygoAddToDeck(${i})">
       <img src="${c.image}" onerror="this.src='https://via.placeholder.com/100x130/16161f/6d5acd?text=?'">
       <div class="ypc-info">
         <div class="ypc-name">${c.name}</div>
-        <div class="ypc-lvl">${'⭐'.repeat(Math.min(yc.level,4))}${yc.level>4?' +':''}${yc.level>4?yc.level-4:''}</div>
-        <div class="ypc-stats">ATK ${yc.ygoAtk} / DEF ${yc.ygoDef}</div>
+        <div class="ypc-lvl">${'⭐'.repeat(Math.min(yc.level,4))}${yc.level>4?'+':''}${yc.level>4?yc.level-4:''}</div>
+        <div class="ypc-stats">${yc.ygoAtk}/${yc.ygoDef}</div>
       </div>
     </div>`;
   }).join('');
 }
 
-function ygoAddToDeck(collIdx){
-  const c = gs.coll[collIdx];
-  if(ygoDeck.some(d=>d&&d.uid===c.uid)) return;
-  const ei = ygoDeck.findIndex(d=>!d);
-  if(ygoDeck.length<10) ygoDeck.push({...c});
-  else if(ei>=0) ygoDeck[ei] = {...c};
-  else{showModal('Deck cheio','Máximo 10 cartas!');return}
-  ygoRenderDeckBuilder();
+function ygoAddToDeck(ci){
+  const c=gs.coll[ci];if(ygoDeck.some(d=>d&&d.uid===c.uid))return;
+  if(ygoDeck.length>=10){showModal('Cheio','Máximo 10!');return}
+  ygoDeck.push({...c});ygoRenderDeckBuilder();
 }
-function ygoRemoveFromDeck(i){
-  ygoDeck.splice(i,1);
-  ygoRenderDeckBuilder();
-}
+function ygoRemoveFromDeck(i){ygoDeck.splice(i,1);ygoRenderDeckBuilder()}
 
-// Start YGO Duel
+// ===== START DUEL V2 =====
 function ygoStartDuel(){
-  const deckCards = ygoDeck.filter(Boolean);
-  if(deckCards.length < 10){showModal('Deck incompleto','Precisa de 10 cartas!');return}
+  const dk=ygoDeck.filter(Boolean);if(dk.length<10)return;
 
-  // Convert all to YGO cards
-  const playerDeck = deckCards.map(c => cardToYGO(c)).sort(()=>Math.random()-.5);
-  // Bot deck from FAMOUS_CHARACTERS
+  // Build player deck: each card = 1 monster + 1 spell/trap
+  const allCards = [];
+  dk.forEach(c => {
+    allCards.push(cardToYGO(c));
+    allCards.push(generateSpellTrap(c));
+  });
+  const playerDeck = allCards.sort(()=>Math.random()-.5);
+
+  // Bot deck
   const botKeys = Object.keys(FAMOUS_CHARACTERS).sort(()=>Math.random()-.5).slice(0,10);
-  const botDeck = botKeys.map(k => {
-    const d = FAMOUS_CHARACTERS[k];
-    const ra = rRarity();
-    const m = (RARITIES.find(r=>r.name===ra.name)||RARITIES[0]).multiplier;
-    const fakeCard = {
-      name:d.displayName, anime:d.anime, image:'', rarity:ra.name,
+  const botCards = [];
+  botKeys.forEach(k => {
+    const d=FAMOUS_CHARACTERS[k];const ra=rRarity();
+    const m=(RARITIES.find(r=>r.name===ra.name)||RARITIES[0]).multiplier;
+    const fk={name:d.displayName,anime:d.anime,image:'',rarity:ra.name,
       stats:{hp:0,atk:Math.round(d.stats.atk*m),def:Math.round(d.stats.def*m),spAtk:Math.round(d.stats.spAtk*m),spDef:Math.round(d.stats.spDef*m),spd:0},
-      uid:'ybot_'+Math.random().toString(36).substr(2,6)
-    };
-    return cardToYGO(fakeCard);
-  }).sort(()=>Math.random()-.5);
+      uid:'yb_'+Math.random().toString(36).substr(2,5)};
+    botCards.push(cardToYGO(fk));
+    botCards.push(generateSpellTrap(fk));
+  });
+  const botDeck = botCards.sort(()=>Math.random()-.5);
 
-  // Fetch bot images async
-  (async()=>{
-    for(const c of botDeck){
-      const img = await fImg(c.name);
-      c.image = img || `https://via.placeholder.com/100x130/16161f/c0392b?text=${encodeURIComponent(c.name.charAt(0))}`;
-    }
-    ygoUpdateField();
-  })();
+  // Fetch bot images
+  (async()=>{for(const c of botDeck){if(c.cardType==='monster'&&!c.image){const img=await fImg(c.name);c.image=img||`https://via.placeholder.com/100x130/16161f/c0392b?text=${encodeURIComponent(c.name.charAt(0))}`}else if(!c.image){c.image=`https://via.placeholder.com/100x130/16161f/1a6b2c?text=${c.type==='spell'?'🪄':'🪤'}`}}ygoUpdateField()})();
 
-  // Draw 5 each
-  const pHand = playerDeck.splice(0,5);
-  const bHand = botDeck.splice(0,5);
+  const pH=playerDeck.splice(0,5);const bH=botDeck.splice(0,5);
 
-  YGO = {
-    p: {lp:4000, hand:pHand, deck:playerDeck, field:[], summoned:false},
-    b: {lp:4000, hand:bHand, deck:botDeck, field:[], summoned:false},
-    turn:1, phase:'main', currentPlayer:'p',
-    selectedHandIdx:null, attackerIdx:null, state:'playing'
+  YGO={
+    p:{lp:4000,hand:pH,deck:playerDeck,field:[],st:[],summoned:false},
+    b:{lp:4000,hand:bH,deck:botDeck,field:[],st:[],summoned:false},
+    turn:1,phase:'main',currentPlayer:'p',
+    selectedHandIdx:null,attackerIdx:null,selectedFieldIdx:null,
+    state:'playing'
   };
 
   document.getElementById('ygoArena').classList.add('active');
   document.body.style.overflow='hidden';
   document.getElementById('ygoLog').innerHTML='';
-  ygoAddLog('🃏 Duelo YGO começou!','yl-system');
-  ygoAddLog('Turno 1 — Sua vez!','yl-system');
+  ygoAddLog('🃏 Duelo YGO v2 começou!','yl-system');
+  ygoAddLog('Turno 1 — Sua vez! (20 cartas no deck)','yl-system');
   ygoUpdateField();
 }
 
+// ===== FIELD UPDATE V2 =====
 function ygoUpdateField(){
-  if(!YGO) return;
-  // LP
-  document.getElementById('ygoPlayerLP').textContent = YGO.p.lp;
-  document.getElementById('ygoBotLP').textContent = YGO.b.lp;
-  document.getElementById('ygoPlayerLPBar').style.width = (YGO.p.lp/4000*100)+'%';
-  document.getElementById('ygoBotLPBar').style.width = (YGO.b.lp/4000*100)+'%';
-  document.getElementById('ygoTurnNum').textContent = YGO.turn;
+  if(!YGO)return;
+  document.getElementById('ygoPlayerLP').textContent=YGO.p.lp;
+  document.getElementById('ygoBotLP').textContent=YGO.b.lp;
+  document.getElementById('ygoPlayerLPBar').style.width=(YGO.p.lp/4000*100)+'%';
+  document.getElementById('ygoBotLPBar').style.width=(YGO.b.lp/4000*100)+'%';
+  document.getElementById('ygoTurnNum').textContent=YGO.turn;
+  document.getElementById('ygoDeckLeft').textContent=YGO.p.deck.length;
 
-  const phaseNames = {draw:'DRAW PHASE',main:'MAIN PHASE',battle:'BATTLE PHASE',end:'END PHASE'};
-  document.getElementById('ygoPhase').textContent = phaseNames[YGO.phase]||'';
+  const phaseNames={draw:'DRAW',main:'MAIN PHASE',battle:'BATTLE PHASE',end:'END PHASE'};
+  document.getElementById('ygoPhase').textContent=phaseNames[YGO.phase]||'';
 
   // Bot monsters
-  const bmEl = document.getElementById('ygoBotMonsters');
-  bmEl.innerHTML = '';
-  for(let i=0;i<3;i++){
-    const m = YGO.b.field[i];
-    if(m){
-      const isTarget = YGO.phase==='battle' && YGO.attackerIdx!==null;
-      bmEl.innerHTML += `<div class="ygo-card-slot has-card ${m.position==='def'?'defense':''} ${isTarget?'attack-target':''}" onclick="ygoAttackTarget(${i})">
-        <img src="${m.image}" onerror="this.src='https://via.placeholder.com/100x130/16161f/c0392b?text=?'">
-        <div class="cs-atk"><span>⚔${m.ygoAtk}</span><span>🛡${m.ygoDef}</span></div>
-      </div>`;
-    } else {
-      bmEl.innerHTML += `<div class="ygo-card-slot"><span>—</span></div>`;
-    }
-  }
+  const bmEl=document.getElementById('ygoBotMonsters');bmEl.innerHTML='';
+  for(let i=0;i<3;i++){const m=YGO.b.field[i];
+    if(m){const isT=YGO.phase==='battle'&&YGO.attackerIdx!==null;
+      bmEl.innerHTML+=`<div class="ygo-card-slot has-card ${m.position==='def'?'defense':''} ${m.faceDown?'facedown':''} ${isT?'attack-target':''}" onclick="ygoAttackTarget(${i})">
+      <img src="${m.image}" onerror="this.src='https://via.placeholder.com/100x130/16161f/c0392b?text=?'">
+      ${m.specialEffect?`<div class="cs-effect">✨</div>`:''}
+      <div class="cs-atk"><span>⚔${m.ygoAtk}</span><span>🛡${m.ygoDef}</span></div></div>`}
+    else bmEl.innerHTML+=`<div class="ygo-card-slot"><span>—</span></div>`}
+
+  // Bot S/T
+  const bstEl=document.getElementById('ygoBotST');bstEl.innerHTML='';
+  for(let i=0;i<2;i++){const s=YGO.b.st[i];
+    if(s){bstEl.innerHTML+=`<div class="ygo-st-slot has-st ${s.isSet&&!s.isRevealed?'trap-set':(s.type==='spell'?'spell-card':'trap-card')}"><div class="st-name">${s.isSet&&!s.isRevealed?'???':s.name}</div></div>`}
+    else bstEl.innerHTML+=`<div class="ygo-st-slot"><span>—</span></div>`}
 
   // Player monsters
-  const pmEl = document.getElementById('ygoPlayerMonsters');
-  pmEl.innerHTML = '';
-  for(let i=0;i<3;i++){
-    const m = YGO.p.field[i];
-    if(m){
-      const canAtk = YGO.phase==='battle' && m.canAttack && m.position==='atk' && YGO.attackerIdx===null;
-      pmEl.innerHTML += `<div class="ygo-card-slot has-card ${m.position==='def'?'defense':''} ${canAtk?'can-attack':''}" onclick="ygoSelectAttacker(${i})">
-        <img src="${m.image}" onerror="this.src='https://via.placeholder.com/100x130/16161f/6d5acd?text=?'">
-        <div class="cs-atk"><span>⚔${m.ygoAtk}</span><span>🛡${m.ygoDef}</span></div>
-      </div>`;
-    } else {
-      pmEl.innerHTML += `<div class="ygo-card-slot"><span>—</span></div>`;
-    }
-  }
+  const pmEl=document.getElementById('ygoPlayerMonsters');pmEl.innerHTML='';
+  for(let i=0;i<3;i++){const m=YGO.p.field[i];
+    if(m){const canA=YGO.phase==='battle'&&m.canAttack&&m.position==='atk'&&YGO.attackerIdx===null;
+      const isSel=YGO.selectedFieldIdx===i;
+      pmEl.innerHTML+=`<div class="ygo-card-slot has-card ${m.position==='def'?'defense':''} ${m.faceDown?'facedown':''} ${canA?'can-attack':''} ${isSel?'attack-target':''}" onclick="${YGO.phase==='battle'?`ygoSelectAttacker(${i})`:`ygoSelectField(${i})`}">
+      <img src="${m.image}" onerror="this.src='https://via.placeholder.com/100x130/16161f/6d5acd?text=?'">
+      ${m.specialEffect?`<div class="cs-effect">✨${m.specialEffect.name.substring(0,3)}</div>`:''}
+      <div class="cs-atk"><span>⚔${m.ygoAtk}</span><span>🛡${m.ygoDef}</span></div></div>`}
+    else pmEl.innerHTML+=`<div class="ygo-card-slot"><span>—</span></div>`}
+
+  // Player S/T
+  const pstEl=document.getElementById('ygoPlayerST');pstEl.innerHTML='';
+  for(let i=0;i<2;i++){const s=YGO.p.st[i];
+    if(s){pstEl.innerHTML+=`<div class="ygo-st-slot has-st ${s.isSet?'trap-set':(s.type==='spell'?'spell-card':'trap-card')}"><div class="st-name">${s.name}</div></div>`}
+    else pstEl.innerHTML+=`<div class="ygo-st-slot"><span>—</span></div>`}
 
   // Hand
-  const handEl = document.getElementById('ygoHand');
-  handEl.innerHTML = '';
-  document.getElementById('ygoHandCount').textContent = YGO.p.hand.length;
-  YGO.p.hand.forEach((c,i) => {
-    const sel = YGO.selectedHandIdx===i;
-    handEl.innerHTML += `<div class="ygo-hand-card ${sel?'selected-hand':''}" onclick="ygoSelectHand(${i})">
-      <div class="hc-lvl">Lv${c.level}</div>
+  const hEl=document.getElementById('ygoHand');hEl.innerHTML='';
+  document.getElementById('ygoHandCount').textContent=YGO.p.hand.length;
+  YGO.p.hand.forEach((c,i)=>{
+    const sel=YGO.selectedHandIdx===i;
+    const isMonster=c.cardType==='monster';
+    const typeClass=isMonster?'hc-type-monster':(c.type==='spell'?'hc-type-spell':'hc-type-trap');
+    const typeLabel=isMonster?'MON':(c.type==='spell'?'SPC':'TRP');
+    hEl.innerHTML+=`<div class="ygo-hand-card ${sel?'selected-hand':''}" onclick="ygoSelectHand(${i})">
+      <div class="hc-type ${typeClass}">${typeLabel}</div>
+      ${isMonster?`<div class="hc-lvl">Lv${c.level}</div>`:''}
       <img src="${c.image}" onerror="this.src='https://via.placeholder.com/80x100/16161f/6d5acd?text=?'">
-      <div class="hc-info"><div class="hc-name">${c.name}</div><div class="hc-stats">${c.ygoAtk}/${c.ygoDef}</div></div>
-    </div>`;
+      <div class="hc-info"><div class="hc-name">${isMonster?c.name:c.name}</div>
+      <div class="hc-stats">${isMonster?`${c.ygoAtk}/${c.ygoDef}`:c.desc.substring(0,20)+'...'}</div></div></div>`;
   });
 
   // Buttons
-  const canSummon = YGO.phase==='main' && !YGO.p.summoned && YGO.selectedHandIdx!==null && YGO.p.field.length<3;
-  const hasAtkMonsters = YGO.p.field.some(m=>m.canAttack && m.position==='atk');
-  const inBattle = YGO.phase==='battle';
-  const noEnemyMonsters = YGO.b.field.length===0;
+  const selCard=YGO.selectedHandIdx!==null?YGO.p.hand[YGO.selectedHandIdx]:null;
+  const isMonster=selCard?.cardType==='monster';
+  const isSpell=selCard?.type==='spell';
+  const isTrap=selCard?.type==='trap';
+  const canSummon=YGO.phase==='main'&&!YGO.p.summoned&&isMonster&&YGO.p.field.length<3;
+  const canSpell=YGO.phase==='main'&&isSpell;
+  const canTrap=YGO.phase==='main'&&isTrap&&YGO.p.st.length<2;
+  const hasAtk=YGO.p.field.some(m=>m&&m.canAttack&&m.position==='atk');
+  const inBattle=YGO.phase==='battle';
+  const noEnemy=YGO.b.field.length===0;
+  const hasFD=YGO.p.field.some(m=>m&&m.faceDown);
+  const hasMon=YGO.selectedFieldIdx!==null&&YGO.p.field[YGO.selectedFieldIdx];
 
-  document.getElementById('ygoSummonBtn').disabled = !canSummon;
-  document.getElementById('ygoDefBtn').disabled = !canSummon;
-  document.getElementById('ygoAttackBtn').disabled = !(YGO.phase==='main' && hasAtkMonsters);
-  document.getElementById('ygoDirectBtn').disabled = !(inBattle && YGO.attackerIdx!==null && noEnemyMonsters);
+  document.getElementById('ygoSummonBtn').disabled=!canSummon;
+  document.getElementById('ygoDefBtn').disabled=!canSummon;
+  document.getElementById('ygoSpellBtn').disabled=!canSpell;
+  document.getElementById('ygoTrapBtn').disabled=!canTrap;
+  document.getElementById('ygoAttackBtn').disabled=!(YGO.phase==='main'&&hasAtk);
+  document.getElementById('ygoDirectBtn').disabled=!(inBattle&&YGO.attackerIdx!==null&&noEnemy);
+  document.getElementById('ygoFlipBtn').disabled=!(YGO.phase==='main'&&hasFD);
+  document.getElementById('ygoPosBtn').disabled=!(YGO.phase==='main'&&hasMon&&!YGO.p.field[YGO.selectedFieldIdx].hasChangedPos);
 }
 
-function ygoSelectHand(i){
-  YGO.selectedHandIdx = YGO.selectedHandIdx===i ? null : i;
-  ygoUpdateField();
-}
+function ygoSelectHand(i){YGO.selectedHandIdx=YGO.selectedHandIdx===i?null:i;YGO.selectedFieldIdx=null;ygoUpdateField()}
+function ygoSelectField(i){YGO.selectedFieldIdx=YGO.selectedFieldIdx===i?null:i;YGO.selectedHandIdx=null;ygoUpdateField()}
 
-// SUMMONING
-function ygoDoSummon(position){
-  if(!YGO || YGO.phase!=='main' || YGO.p.summoned || YGO.selectedHandIdx===null) return;
-  const card = YGO.p.hand[YGO.selectedHandIdx];
-  if(YGO.p.field.length>=3){showModal('Campo cheio','Máximo 3 monstros!');return}
+// ===== SUMMONING V2 =====
+function ygoDoSummon(pos){
+  if(!YGO||YGO.phase!=='main'||YGO.p.summoned||YGO.selectedHandIdx===null)return;
+  const card=YGO.p.hand[YGO.selectedHandIdx];
+  if(card.cardType!=='monster'){showModal('Erro','Só monstros podem ser invocados!');return}
+  if(YGO.p.field.length>=3){showModal('Campo cheio','Máx 3!');return}
 
-  // Tribute check
-  const tributes = card.level>=7 ? 2 : card.level>=5 ? 1 : 0;
-  if(tributes > YGO.p.field.length){
-    showModal('Tributos insuficientes',`Nível ${card.level} precisa de ${tributes} tributo(s)! Você tem ${YGO.p.field.length} monstro(s) no campo.`);
-    return;
+  const tributes=card.level>=7?2:card.level>=5?1:0;
+  if(tributes>YGO.p.field.length){showModal('Tributos',`Nível ${card.level} precisa ${tributes} tributo(s)!`);return}
+  if(tributes>0){
+    const sorted=[...YGO.p.field].sort((a,b)=>a.ygoAtk-b.ygoAtk);
+    for(let t=0;t<tributes;t++){const idx=YGO.p.field.indexOf(sorted[t]);ygoAddLog(`Tributou ${sorted[t].name}`,'yl-player');YGO.p.field.splice(idx,1)}
   }
 
-  // Remove tributes (weakest first)
-  if(tributes > 0){
-    const sorted = [...YGO.p.field].sort((a,b)=>a.ygoAtk-b.ygoAtk);
-    for(let t=0;t<tributes;t++){
-      const idx = YGO.p.field.indexOf(sorted[t]);
-      ygoAddLog(`Tributou ${sorted[t].name}`,'yl-player');
-      YGO.p.field.splice(idx,1);
+  card.position=pos;card.canAttack=false;card.justSummoned=true;card.faceDown=pos==='def';card.hasChangedPos=false;
+  YGO.p.field.push(card);YGO.p.hand.splice(YGO.selectedHandIdx,1);YGO.p.summoned=true;YGO.selectedHandIdx=null;
+
+  const sType=tributes>0?'Tributo':'Normal';
+  ygoAddLog(`${sType}: ${card.name} em ${pos==='atk'?'ATQ':'DEF'}! (${card.ygoAtk}/${card.ygoDef})`,'yl-player');
+
+  // Apply onSummon effect
+  if(card.specialEffect?.type==='onSummon'){
+    const eff=card.specialEffect;
+    if(eff.atkBoost){card.ygoAtk+=eff.atkBoost;ygoAddLog(`✨ ${eff.name}: +${eff.atkBoost} ATK!`,'yl-spell')}
+    if(eff.defBoost){card.ygoDef+=eff.defBoost}
+    if(eff.damage){YGO.b.lp=Math.max(0,YGO.b.lp-eff.damage);ygoAddLog(`✨ ${eff.name}: Bot -${eff.damage} LP!`,'yl-spell')}
+    if(eff.heal){YGO.p.lp=Math.min(4000,YGO.p.lp+eff.heal);ygoAddLog(`✨ ${eff.name}: +${eff.heal} LP!`,'yl-spell')}
+    if(eff.enemyAtkReduce&&YGO.b.field.length>0){
+      const target=YGO.b.field[0];target.ygoAtk=Math.max(0,target.ygoAtk-eff.enemyAtkReduce);
+      ygoAddLog(`✨ ${eff.name}: ${target.name} -${eff.enemyAtkReduce} ATK!`,'yl-spell');
     }
   }
 
-  // Summon
-  card.position = position;
-  card.canAttack = false;
-  card.justSummoned = true;
-  YGO.p.field.push(card);
+  ygoUpdateField();ygoCheckWin();
+}
+function ygoSummon(){ygoDoSummon('atk')}
+function ygoSummonDef(){ygoDoSummon('def')}
+
+// ===== SPELL CARDS =====
+function ygoPlaySpell(){
+  if(!YGO||YGO.phase!=='main'||YGO.selectedHandIdx===null)return;
+  const card=YGO.p.hand[YGO.selectedHandIdx];
+  if(card.type!=='spell')return;
+
+  // Check Asta's anti-magic on targeted monster
+  const eff=card.effect;
+  ygoAddLog(`🪄 Ativou ${card.name}!`,'yl-spell');
+
+  switch(eff){
+    case 'atkBoost':
+      if(YGO.p.field.length===0){showModal('Sem alvo','Sem monstros no campo!');return}
+      const strongest=YGO.p.field.reduce((max,m)=>m.ygoAtk>max.ygoAtk?m:max);
+      strongest.ygoAtk+=card.value;
+      ygoAddLog(`${strongest.name} +${card.value} ATK → ${strongest.ygoAtk}`,'yl-spell');break;
+    case 'defBoost':
+      if(YGO.p.field.length===0){showModal('Sem alvo','Sem monstros!');return}
+      const def1=YGO.p.field.reduce((max,m)=>m.ygoDef>max.ygoDef?m:max);
+      def1.ygoDef+=card.value;ygoAddLog(`${def1.name} +${card.value} DEF`,'yl-spell');break;
+    case 'healLP':
+      YGO.p.lp=Math.min(4000,YGO.p.lp+card.value);ygoAddLog(`+${card.value} LP! (${YGO.p.lp})`,'yl-spell');break;
+    case 'destroyWeakest':
+      if(YGO.b.field.length===0){showModal('Sem alvo','Bot sem monstros!');return}
+      const weakest=YGO.b.field.reduce((min,m,i)=>m.ygoAtk<min.atk?{atk:m.ygoAtk,idx:i}:min,{atk:Infinity,idx:0});
+      // Check spell immunity
+      if(YGO.b.field[weakest.idx]?.specialEffect?.type==='spellImmune'){ygoAddLog(`${YGO.b.field[weakest.idx].name} é imune a Spells!`,'yl-system');break}
+      ygoAddLog(`Destruiu ${YGO.b.field[weakest.idx].name}!`,'yl-spell');
+      YGO.b.field.splice(weakest.idx,1);break;
+    case 'statBoost':
+      if(YGO.p.field.length===0){showModal('Sem alvo','Sem monstros!');return}
+      const target=YGO.p.field[0];target.ygoAtk+=card.atkVal;target.ygoDef+=card.defVal;
+      ygoAddLog(`${target.name} +${card.atkVal}ATK +${card.defVal}DEF`,'yl-spell');break;
+    case 'drain':
+      YGO.b.lp=Math.max(0,YGO.b.lp-card.value);YGO.p.lp=Math.min(4000,YGO.p.lp+card.value);
+      ygoAddLog(`Drenou ${card.value} LP!`,'yl-spell');break;
+    case 'draw':
+      for(let i=0;i<card.value&&YGO.p.deck.length>0;i++){YGO.p.hand.push(YGO.p.deck.shift())}
+      ygoAddLog(`Comprou ${card.value} cartas!`,'yl-spell');break;
+    case 'furyBoost':
+      if(YGO.p.field.length===0){showModal('Sem alvo','Sem monstros!');return}
+      const fury=YGO.p.field.reduce((max,m)=>m.ygoAtk>max.ygoAtk?m:max);
+      fury.ygoAtk+=card.atkVal;fury.ygoDef=Math.max(0,fury.ygoDef+card.defVal);
+      ygoAddLog(`${fury.name} +${card.atkVal}ATK ${card.defVal}DEF`,'yl-spell');break;
+    case 'destroyTrap':
+      if(YGO.b.st.length>0){ygoAddLog(`Destruiu trap: ${YGO.b.st[0].name}!`,'yl-spell');YGO.b.st.shift()}
+      else ygoAddLog('Bot sem traps setadas.','yl-system');break;
+  }
+
+  YGO.p.hand.splice(YGO.selectedHandIdx,1);YGO.selectedHandIdx=null;
+  ygoUpdateField();ygoCheckWin();
+}
+
+// ===== TRAP CARDS =====
+function ygoSetTrap(){
+  if(!YGO||YGO.phase!=='main'||YGO.selectedHandIdx===null)return;
+  const card=YGO.p.hand[YGO.selectedHandIdx];
+  if(card.type!=='trap')return;
+  if(YGO.p.st.length>=2){showModal('Cheio','Máx 2 Spell/Trap!');return}
+
+  card.isSet=true;card.isRevealed=false;
+  YGO.p.st.push(card);
   YGO.p.hand.splice(YGO.selectedHandIdx,1);
-  YGO.p.summoned = true;
-  YGO.selectedHandIdx = null;
-
-  const summonType = tributes>0 ? 'Invocação por Tributo' : 'Invocação Normal';
-  const posText = position==='atk'?'Ataque':'Defesa';
-  ygoAddLog(`${summonType}: ${card.name} em ${posText}! (ATK ${card.ygoAtk} / DEF ${card.ygoDef})`,'yl-player');
+  YGO.selectedHandIdx=null;
+  ygoAddLog(`🪤 Setou uma carta face-down!`,'yl-player');
   ygoUpdateField();
 }
 
-function ygoSummon(){ ygoDoSummon('atk'); }
-function ygoSummonDef(){ ygoDoSummon('def'); }
+function ygoTriggerTrap(trapCard, attackerCard, side){
+  trapCard.isRevealed=true;
+  ygoAddLog(`🪤 TRAP ATIVADA: ${trapCard.name}!`,'yl-trap');
 
-// BATTLE PHASE
-function ygoAttackPhase(){
-  if(YGO.phase!=='main') return;
-  YGO.phase = 'battle';
-  YGO.attackerIdx = null;
-  ygoAddLog('⚔️ Battle Phase!','yl-system');
-  ygoUpdateField();
+  switch(trapCard.effect){
+    case 'destroyAttacker':
+      const atkSide=side==='p'?'b':'p';
+      const atkIdx=YGO[atkSide].field.indexOf(attackerCard);
+      if(atkIdx>=0){ygoAddLog(`${attackerCard.name} destruído pela trap!`,'yl-trap');YGO[atkSide].field.splice(atkIdx,1)}
+      return 'negated';
+    case 'negateAttack':
+      ygoAddLog(`Ataque negado!`,'yl-trap');return 'negated';
+    case 'weakenAttacker':
+      attackerCard.ygoAtk=Math.max(0,attackerCard.ygoAtk-trapCard.value);
+      ygoAddLog(`${attackerCard.name} -${trapCard.value} ATK!`,'yl-trap');return 'continue';
+    case 'directDamage':
+      const targetSide=side==='p'?'b':'p';
+      YGO[targetSide].lp=Math.max(0,YGO[targetSide].lp-trapCard.value);
+      ygoAddLog(`💣 ${side==='p'?'Bot':'Você'} -${trapCard.value} LP!`,'yl-trap');return 'continue';
+    case 'healOnAttack':
+      const healSide=side;
+      YGO[healSide].lp=Math.min(4000,YGO[healSide].lp+trapCard.value);
+      ygoAddLog(`💚 +${trapCard.value} LP!`,'yl-trap');return 'continue';
+  }
+  return 'continue';
 }
+
+// ===== FLIP SUMMON =====
+function ygoFlipSummon(){
+  if(!YGO||YGO.phase!=='main')return;
+  const fd=YGO.p.field.find(m=>m&&m.faceDown);
+  if(!fd)return;
+  fd.faceDown=false;fd.position='atk';
+  ygoAddLog(`🔄 Flip Summon: ${fd.name}! (ATK ${fd.ygoAtk})`,'yl-player');
+
+  // Trigger onSummon effect on flip
+  if(fd.specialEffect?.type==='onSummon'){
+    const eff=fd.specialEffect;
+    if(eff.atkBoost){fd.ygoAtk+=eff.atkBoost;ygoAddLog(`✨ ${eff.name}: +${eff.atkBoost} ATK!`,'yl-spell')}
+    if(eff.damage){YGO.b.lp=Math.max(0,YGO.b.lp-eff.damage);ygoAddLog(`✨ ${eff.name}: Bot -${eff.damage} LP!`,'yl-spell')}
+  }
+  ygoUpdateField();ygoCheckWin();
+}
+
+// ===== CHANGE POSITION =====
+function ygoChangePos(){
+  if(!YGO||YGO.phase!=='main'||YGO.selectedFieldIdx===null)return;
+  const m=YGO.p.field[YGO.selectedFieldIdx];
+  if(!m||m.hasChangedPos)return;
+  m.position=m.position==='atk'?'def':'atk';
+  m.hasChangedPos=true;m.canAttack=false;
+  ygoAddLog(`${m.name} → ${m.position==='atk'?'ATQ':'DEF'}`,'yl-player');
+  YGO.selectedFieldIdx=null;ygoUpdateField();
+}
+
+// ===== BATTLE V2 =====
+function ygoAttackPhase(){if(YGO.phase!=='main')return;YGO.phase='battle';YGO.attackerIdx=null;ygoAddLog('⚔️ Battle Phase!','yl-system');ygoUpdateField()}
 
 function ygoSelectAttacker(i){
-  if(YGO.phase!=='battle') return;
-  const m = YGO.p.field[i];
-  if(!m || !m.canAttack || m.position!=='atk') return;
-  YGO.attackerIdx = i;
-  ygoAddLog(`${m.name} selecionado para atacar`,'yl-player');
-  ygoUpdateField();
+  if(YGO.phase!=='battle')return;const m=YGO.p.field[i];
+  if(!m||!m.canAttack||m.position!=='atk')return;
+  YGO.attackerIdx=i;ygoAddLog(`${m.name} selecionado`,'yl-player');ygoUpdateField();
 }
 
 function ygoAttackTarget(i){
-  if(YGO.phase!=='battle' || YGO.attackerIdx===null) return;
-  const atk = YGO.p.field[YGO.attackerIdx];
-  const def = YGO.b.field[i];
-  if(!atk || !def) return;
+  if(YGO.phase!=='battle'||YGO.attackerIdx===null)return;
+  let atk=YGO.p.field[YGO.attackerIdx];const def=YGO.b.field[i];
+  if(!atk||!def)return;
 
-  atk.canAttack = false;
-  const defValue = def.position==='def' ? def.ygoDef : def.ygoAtk;
-  const atkValue = atk.ygoAtk;
-
-  if(def.position==='def'){
-    // Attack vs defense
-    if(atkValue > defValue){
-      ygoAddLog(`${atk.name} (${atkValue}) destruiu ${def.name} (DEF ${defValue})!`,'yl-player');
-      YGO.b.field.splice(i,1);
-    } else if(atkValue < defValue){
-      const dmg = defValue - atkValue;
-      YGO.p.lp = Math.max(0, YGO.p.lp - dmg);
-      ygoAddLog(`${atk.name} não conseguiu! -${dmg} LP`,'yl-enemy');
-    } else {
-      ygoAddLog(`Empate! Nenhum monstro destruído.`,'yl-system');
-    }
-  } else {
-    // Attack vs attack
-    if(atkValue > defValue){
-      const dmg = atkValue - defValue;
-      YGO.b.lp = Math.max(0, YGO.b.lp - dmg);
-      YGO.b.field.splice(i,1);
-      ygoAddLog(`${atk.name} (${atkValue}) destruiu ${def.name} (${defValue})! Bot -${dmg} LP`,'yl-player');
-    } else if(atkValue < defValue){
-      const dmg = defValue - atkValue;
-      YGO.p.lp = Math.max(0, YGO.p.lp - dmg);
-      YGO.p.field.splice(YGO.attackerIdx,1);
-      ygoAddLog(`${def.name} (${defValue}) destruiu ${atk.name} (${atkValue})! Você -${dmg} LP`,'yl-enemy');
-    } else {
-      YGO.p.field.splice(YGO.attackerIdx,1);
-      YGO.b.field.splice(i,1);
-      ygoAddLog(`Ambos destruídos! ATK iguais.`,'yl-system');
+  // Check for traps
+  if(YGO.b.st.length>0){
+    const setTrap=YGO.b.st.find(t=>t.isSet);
+    if(setTrap){
+      const trapIdx=YGO.b.st.indexOf(setTrap);
+      const result=ygoTriggerTrap(setTrap,atk,'b');
+      YGO.b.st.splice(trapIdx,1);
+      if(result==='negated'){atk.canAttack=false;YGO.attackerIdx=null;ygoUpdateField();ygoCheckWin();return}
     }
   }
 
-  YGO.attackerIdx = null;
-  ygoUpdateField();
-  ygoCheckWin();
+  // onAttack effects
+  let bonusDmg=0;
+  if(atk.specialEffect?.type==='onAttack'){
+    const eff=atk.specialEffect;
+    if(eff.atkBoost){atk.ygoAtk+=eff.atkBoost;ygoAddLog(`✨ ${eff.name}: +${eff.atkBoost} ATK!`,'yl-spell')}
+    if(eff.bonusDamage)bonusDmg+=eff.bonusDamage;
+    if(eff.ignoreDefense)bonusDmg+=eff.ignoreDefense;
+    if(eff.doubleDamage&&!eff.used){bonusDmg+=atk.ygoAtk;eff.used=true;ygoAddLog(`✨ ${eff.name}: DANO DOBRADO!`,'yl-spell')}
+  }
+
+  atk.canAttack=false;
+  const defValue=def.position==='def'?def.ygoDef:def.ygoAtk;
+
+  // onDefend effects
+  let dmgReduction=0;
+  if(def.specialEffect?.type==='onDefend'){dmgReduction=def.specialEffect.damageReduction||0}
+
+  if(def.faceDown){def.faceDown=false;ygoAddLog(`Revelou ${def.name}! (ATK ${def.ygoAtk} DEF ${def.ygoDef})`,'yl-system')}
+
+  if(def.position==='def'){
+    if(atk.ygoAtk>defValue){ygoAddLog(`${atk.name} destruiu ${def.name} em DEF!`,'yl-player');YGO.b.field.splice(i,1)}
+    else if(atk.ygoAtk<defValue){let dmg=defValue-atk.ygoAtk;if(dmgReduction)dmg=Math.round(dmg*(1-dmgReduction/100));YGO.p.lp=Math.max(0,YGO.p.lp-dmg);ygoAddLog(`Rebatido! Você -${dmg} LP`,'yl-enemy')}
+    else ygoAddLog('Empate! Ninguém destruído.','yl-system');
+  } else {
+    const atkVal=atk.ygoAtk+bonusDmg;
+    if(atkVal>defValue){let dmg=atkVal-defValue;if(dmgReduction)dmg=Math.round(dmg*(1-dmgReduction/100));YGO.b.lp=Math.max(0,YGO.b.lp-dmg);YGO.b.field.splice(i,1);ygoAddLog(`${atk.name} destruiu ${def.name}! Bot -${dmg} LP`,'yl-player')}
+    else if(atkVal<defValue){const dmg=defValue-atkVal;YGO.p.lp=Math.max(0,YGO.p.lp-dmg);YGO.p.field.splice(YGO.attackerIdx,1);ygoAddLog(`${def.name} destruiu ${atk.name}! Você -${dmg} LP`,'yl-enemy')}
+    else{YGO.p.field.splice(YGO.attackerIdx,1);YGO.b.field.splice(i,1);ygoAddLog('Ambos destruídos!','yl-system')}
+  }
+
+  // Double attack (Killua)
+  if(atk.specialEffect?.type==='doubleAttack'&&atk.canAttack===false&&YGO.p.field.includes(atk)){
+    if(!atk._doubleUsed){atk.canAttack=true;atk._doubleUsed=true;ygoAddLog(`✨ ${atk.specialEffect.name}: pode atacar de novo!`,'yl-spell')}
+  }
+
+  YGO.attackerIdx=null;ygoUpdateField();ygoCheckWin();
 }
 
 function ygoDirectAttack(){
-  if(YGO.phase!=='battle' || YGO.attackerIdx===null || YGO.b.field.length>0) return;
-  const atk = YGO.p.field[YGO.attackerIdx];
-  if(!atk) return;
-  atk.canAttack = false;
-  YGO.b.lp = Math.max(0, YGO.b.lp - atk.ygoAtk);
-  ygoAddLog(`💥 ${atk.name} ataque direto! Bot -${atk.ygoAtk} LP!`,'yl-player');
-  YGO.attackerIdx = null;
-  ygoUpdateField();
-  ygoCheckWin();
+  if(YGO.phase!=='battle'||YGO.attackerIdx===null||YGO.b.field.length>0)return;
+  const atk=YGO.p.field[YGO.attackerIdx];if(!atk)return;
+
+  // Check traps
+  if(YGO.b.st.length>0){
+    const setTrap=YGO.b.st.find(t=>t.isSet);
+    if(setTrap){const ti=YGO.b.st.indexOf(setTrap);const res=ygoTriggerTrap(setTrap,atk,'b');YGO.b.st.splice(ti,1);if(res==='negated'){atk.canAttack=false;YGO.attackerIdx=null;ygoUpdateField();ygoCheckWin();return}}
+  }
+
+  let dmg=atk.ygoAtk;
+  if(atk.specialEffect?.type==='onAttack'&&atk.specialEffect.bonusDamage)dmg+=atk.specialEffect.bonusDamage;
+  atk.canAttack=false;
+  YGO.b.lp=Math.max(0,YGO.b.lp-dmg);
+  ygoAddLog(`💥 ${atk.name} direto! Bot -${dmg} LP!`,'yl-player');
+  YGO.attackerIdx=null;ygoUpdateField();ygoCheckWin();
 }
 
-// END TURN
+// ===== END TURN V2 =====
 async function ygoEndTurn(){
-  if(!YGO || YGO.state!=='playing') return;
-
-  // Reset player
-  YGO.phase = 'end';
-  YGO.attackerIdx = null;
-  ygoUpdateField();
-  await dl(300);
+  if(!YGO||YGO.state!=='playing')return;
+  YGO.phase='end';YGO.attackerIdx=null;YGO.selectedHandIdx=null;YGO.selectedFieldIdx=null;
+  ygoUpdateField();await dl(300);
 
   // ===== BOT TURN =====
-  YGO.currentPlayer = 'b';
-  YGO.b.summoned = false;
+  YGO.currentPlayer='b';YGO.b.summoned=false;
   ygoAddLog(`— Turno do Bot —`,'yl-system');
 
   // Bot draw
-  if(YGO.b.deck.length>0){
-    YGO.b.hand.push(YGO.b.deck.shift());
+  if(YGO.b.deck.length>0)YGO.b.hand.push(YGO.b.deck.shift());
+  await dl(400);
+
+  // Bot play spells
+  const botSpells=YGO.b.hand.filter(c=>c.type==='spell');
+  for(const sp of botSpells){
+    if(sp.effect==='atkBoost'&&YGO.b.field.length>0){
+      const t=YGO.b.field.reduce((max,m)=>m.ygoAtk>max.ygoAtk?m:max);
+      t.ygoAtk+=sp.value;ygoAddLog(`🪄 Bot: ${sp.name}! ${t.name} +${sp.value} ATK`,'yl-enemy');
+      YGO.b.hand.splice(YGO.b.hand.indexOf(sp),1);break;
+    }
+    if(sp.effect==='healLP'&&YGO.b.lp<3000){
+      YGO.b.lp=Math.min(4000,YGO.b.lp+sp.value);ygoAddLog(`🪄 Bot: ${sp.name}! +${sp.value} LP`,'yl-enemy');
+      YGO.b.hand.splice(YGO.b.hand.indexOf(sp),1);break;
+    }
+    if(sp.effect==='destroyWeakest'&&YGO.p.field.length>0){
+      const w=YGO.p.field.reduce((min,m,i)=>m.ygoAtk<min.atk?{atk:m.ygoAtk,idx:i}:min,{atk:Infinity,idx:0});
+      if(YGO.p.field[w.idx]?.specialEffect?.type!=='spellImmune'){
+        ygoAddLog(`🪄 Bot: ${sp.name}! Destruiu ${YGO.p.field[w.idx].name}!`,'yl-enemy');
+        YGO.p.field.splice(w.idx,1);
+      }
+      YGO.b.hand.splice(YGO.b.hand.indexOf(sp),1);break;
+    }
   }
+  await dl(300);
 
-  await dl(500);
+  // Bot set traps
+  const botTraps=YGO.b.hand.filter(c=>c.type==='trap');
+  if(botTraps.length>0&&YGO.b.st.length<2){
+    const tr=botTraps[0];tr.isSet=true;tr.isRevealed=false;
+    YGO.b.st.push(tr);YGO.b.hand.splice(YGO.b.hand.indexOf(tr),1);
+    ygoAddLog('🪤 Bot setou uma carta!','yl-enemy');
+  }
+  await dl(300);
 
-  // Bot summon (AI: summon strongest it can)
-  if(!YGO.b.summoned && YGO.b.hand.length>0 && YGO.b.field.length<3){
-    // Sort hand by ATK descending
-    const sortedHand = YGO.b.hand.map((c,i)=>({c,i})).sort((a,b)=>b.c.ygoAtk-a.c.ygoAtk);
-    for(const{c,i} of sortedHand){
-      const tributes = c.level>=7?2:c.level>=5?1:0;
-      if(tributes <= YGO.b.field.length){
-        // Tribute
-        for(let t=0;t<tributes;t++){
-          const weakest = YGO.b.field.reduce((min,m,idx)=>m.ygoAtk<min.atk?{atk:m.ygoAtk,idx}:min,{atk:Infinity,idx:0});
-          ygoAddLog(`Bot tributou ${YGO.b.field[weakest.idx].name}`,'yl-enemy');
-          YGO.b.field.splice(weakest.idx,1);
+  // Bot summon
+  if(!YGO.b.summoned&&YGO.b.field.length<3){
+    const monsters=YGO.b.hand.filter(c=>c.cardType==='monster').sort((a,b)=>b.ygoAtk-a.ygoAtk);
+    for(const m of monsters){
+      const tri=m.level>=7?2:m.level>=5?1:0;
+      if(tri<=YGO.b.field.length){
+        for(let t=0;t<tri;t++){const weakest=YGO.b.field.reduce((min,x,idx)=>x.ygoAtk<min.atk?{atk:x.ygoAtk,idx}:min,{atk:Infinity,idx:0});ygoAddLog(`Bot tributou ${YGO.b.field[weakest.idx].name}`,'yl-enemy');YGO.b.field.splice(weakest.idx,1)}
+        m.position='atk';m.canAttack=false;m.justSummoned=true;m.faceDown=false;
+        YGO.b.field.push(m);YGO.b.hand.splice(YGO.b.hand.indexOf(m),1);YGO.b.summoned=true;
+        ygoAddLog(`Bot invocou ${m.name}! (${m.ygoAtk}/${m.ygoDef})`,'yl-enemy');
+        // Bot onSummon effects
+        if(m.specialEffect?.type==='onSummon'){
+          if(m.specialEffect.atkBoost){m.ygoAtk+=m.specialEffect.atkBoost;ygoAddLog(`✨ ${m.specialEffect.name}: +${m.specialEffect.atkBoost} ATK`,'yl-enemy')}
+          if(m.specialEffect.damage){YGO.p.lp=Math.max(0,YGO.p.lp-m.specialEffect.damage);ygoAddLog(`✨ ${m.specialEffect.name}: Você -${m.specialEffect.damage} LP`,'yl-enemy')}
         }
-        c.position = 'atk';
-        c.canAttack = false;
-        c.justSummoned = true;
-        YGO.b.field.push(c);
-        YGO.b.hand.splice(i,1);
-        YGO.b.summoned = true;
-        ygoAddLog(`Bot invocou ${c.name}! (ATK ${c.ygoAtk} / DEF ${c.ygoDef})`,'yl-enemy');
         break;
       }
     }
   }
 
-  await dl(600);
-  ygoUpdateField();
+  await dl(500);ygoUpdateField();
+
+  // Prepare bot attacks
+  YGO.b.field.forEach(m=>{if(m.justSummoned){m.justSummoned=false;m.canAttack=true}});
 
   // Bot attack
-  for(const m of YGO.b.field){
-    if(m.justSummoned){m.justSummoned=false;m.canAttack=true;continue}
-  }
-
-  // Now attack with available monsters
   for(let bi=YGO.b.field.length-1;bi>=0;bi--){
-    const bm = YGO.b.field[bi];
-    if(!bm||!bm.canAttack||bm.position!=='atk') continue;
-    bm.canAttack = false;
+    const bm=YGO.b.field[bi];if(!bm||!bm.canAttack||bm.position!=='atk')continue;
+    bm.canAttack=false;
 
-    if(YGO.p.field.length===0){
-      // Direct attack
-      YGO.p.lp = Math.max(0, YGO.p.lp - bm.ygoAtk);
-      ygoAddLog(`💥 ${bm.name} ataque direto! Você -${bm.ygoAtk} LP!`,'yl-enemy');
-    } else {
-      // Attack weakest player monster
-      let targetIdx = 0;
-      let minVal = Infinity;
-      YGO.p.field.forEach((pm,pi)=>{
-        const v = pm.position==='def'?pm.ygoDef:pm.ygoAtk;
-        if(v<minVal){minVal=v;targetIdx=pi}
-      });
-      const pm = YGO.p.field[targetIdx];
-      const defV = pm.position==='def'?pm.ygoDef:pm.ygoAtk;
-
-      if(bm.ygoAtk > defV){
-        const dmg = pm.position==='def'?0:bm.ygoAtk-defV;
-        if(dmg>0) YGO.p.lp = Math.max(0, YGO.p.lp-dmg);
-        YGO.p.field.splice(targetIdx,1);
-        ygoAddLog(`${bm.name} destruiu ${pm.name}!${dmg>0?' Você -'+dmg+' LP':''}`,'yl-enemy');
-      } else if(bm.ygoAtk < defV){
-        const dmg = defV - bm.ygoAtk;
-        YGO.b.lp = Math.max(0, YGO.b.lp-dmg);
-        YGO.b.field.splice(bi,1);
-        ygoAddLog(`${pm.name} destruiu ${bm.name}! Bot -${dmg} LP`,'yl-player');
-      } else {
-        YGO.p.field.splice(targetIdx,1);
-        YGO.b.field.splice(bi,1);
-        ygoAddLog(`${bm.name} e ${pm.name} se destruíram!`,'yl-system');
+    // Check player traps
+    if(YGO.p.st.length>0){
+      const setTrap=YGO.p.st.find(t=>t.isSet);
+      if(setTrap&&Math.random()<0.7){
+        const ti=YGO.p.st.indexOf(setTrap);
+        const res=ygoTriggerTrap(setTrap,bm,'p');
+        YGO.p.st.splice(ti,1);
+        if(res==='negated'){await dl(400);ygoUpdateField();if(ygoCheckWin())return;continue}
       }
     }
 
-    await dl(400);
-    ygoUpdateField();
-    if(ygoCheckWin()) return;
+    // Bot onAttack effects
+    let bonusDmg=0;
+    if(bm.specialEffect?.type==='onAttack'){
+      if(bm.specialEffect.bonusDamage)bonusDmg+=bm.specialEffect.bonusDamage;
+    }
+
+    if(YGO.p.field.length===0){
+      YGO.p.lp=Math.max(0,YGO.p.lp-(bm.ygoAtk+bonusDmg));
+      ygoAddLog(`💥 ${bm.name} direto! Você -${bm.ygoAtk+bonusDmg} LP!`,'yl-enemy');
+    } else {
+      let tIdx=0,minV=Infinity;
+      YGO.p.field.forEach((pm,pi)=>{const v=pm.position==='def'?pm.ygoDef:pm.ygoAtk;if(v<minV){minV=v;tIdx=pi}});
+      const pm=YGO.p.field[tIdx];
+      if(pm.faceDown){pm.faceDown=false;ygoAddLog(`Revelou ${pm.name}!`,'yl-system')}
+      const defV=pm.position==='def'?pm.ygoDef:pm.ygoAtk;
+      const atkV=bm.ygoAtk+bonusDmg;
+
+      let dmgRed=0;if(pm.specialEffect?.type==='onDefend')dmgRed=pm.specialEffect.damageReduction||0;
+
+      if(atkV>defV){let dmg=pm.position==='def'?0:atkV-defV;if(dmgRed)dmg=Math.round(dmg*(1-dmgRed/100));if(dmg>0)YGO.p.lp=Math.max(0,YGO.p.lp-dmg);YGO.p.field.splice(tIdx,1);ygoAddLog(`${bm.name} destruiu ${pm.name}!${dmg>0?' Você -'+dmg+' LP':''}`,'yl-enemy')}
+      else if(atkV<defV){const dmg=defV-atkV;YGO.b.lp=Math.max(0,YGO.b.lp-dmg);YGO.b.field.splice(bi,1);ygoAddLog(`${pm.name} destruiu ${bm.name}! Bot -${dmg} LP`,'yl-player')}
+      else{YGO.p.field.splice(tIdx,1);YGO.b.field.splice(bi,1);ygoAddLog('Ambos destruídos!','yl-system')}
+    }
+
+    await dl(400);ygoUpdateField();if(ygoCheckWin())return;
   }
 
   await dl(300);
 
   // ===== PLAYER TURN START =====
-  YGO.turn++;
-  YGO.currentPlayer = 'p';
-  YGO.p.summoned = false;
-  YGO.phase = 'main';
-  YGO.selectedHandIdx = null;
-  YGO.attackerIdx = null;
+  YGO.turn++;YGO.currentPlayer='p';YGO.p.summoned=false;YGO.phase='main';
+  YGO.selectedHandIdx=null;YGO.selectedFieldIdx=null;YGO.attackerIdx=null;
 
-  // Enable attacks for existing monsters
-  YGO.p.field.forEach(m=>{m.canAttack=true;m.justSummoned=false});
-  YGO.b.field.forEach(m=>{m.canAttack=true;m.justSummoned=false});
+  YGO.p.field.forEach(m=>{m.canAttack=true;m.justSummoned=false;m.hasChangedPos=false;if(m._doubleUsed)m._doubleUsed=false});
+  YGO.b.field.forEach(m=>{m.canAttack=true;m.justSummoned=false;m.hasChangedPos=false});
 
-  // Player draw
-  if(YGO.p.deck.length>0){
-    const drawn = YGO.p.deck.shift();
-    YGO.p.hand.push(drawn);
-    ygoAddLog(`Comprou ${drawn.name}! (Deck: ${YGO.p.deck.length})`,'yl-system');
-  } else {
-    ygoAddLog('⚠️ Sem cartas no deck!','yl-system');
-  }
+  if(YGO.p.deck.length>0){const drawn=YGO.p.deck.shift();YGO.p.hand.push(drawn);
+    const tLabel=drawn.cardType==='monster'?'Monstro':(drawn.type==='spell'?'Magia':'Trap');
+    ygoAddLog(`Comprou ${drawn.name||drawn.sourceName} (${tLabel})! Deck: ${YGO.p.deck.length}`,'yl-system')}
+  else ygoAddLog('⚠️ Deck vazio!','yl-system');
 
   ygoAddLog(`— Turno ${YGO.turn} — Sua vez!`,'yl-system');
   ygoUpdateField();
 }
 
 function ygoCheckWin(){
-  if(!YGO || YGO.state!=='playing') return false;
-  if(YGO.p.lp<=0){
-    YGO.state='done';
-    ygoShowEnd('bot');
-    return true;
-  }
-  if(YGO.b.lp<=0){
-    YGO.state='done';
-    ygoShowEnd('player');
-    return true;
-  }
+  if(!YGO||YGO.state!=='playing')return false;
+  if(YGO.p.lp<=0){YGO.state='done';ygoShowEnd('bot');return true}
+  if(YGO.b.lp<=0){YGO.state='done';ygoShowEnd('player');return true}
   return false;
 }
 
-function ygoShowEnd(winner){
-  const ov = document.createElement('div');
-  ov.className = 'ygo-end-overlay';
-  if(winner==='player'){
-    const rw = 80+Math.floor(Math.random()*70);
-    gs.coins+=rw;save();
-    ov.innerHTML=`<h2 style="color:var(--green)">🏆 VITÓRIA!</h2><p>Você venceu o duelo YGO!</p><p style="color:var(--accent);font-size:1.1rem;font-weight:700">+${rw} moedas</p><button onclick="ygoCloseEnd(this)">Voltar</button>`;
+function ygoShowEnd(w){
+  const ov=document.createElement('div');ov.className='ygo-end-overlay';
+  if(w==='player'){
+    const rw=80+Math.floor(Math.random()*70);gs.coins+=rw;save();
+    ov.innerHTML=`<h2 style="color:var(--green)">🏆 VITÓRIA!</h2><p>Duelo YGO vencido!</p>
+    <div class="ygo-end-stats"><div class="yes"><div class="yes-v" style="color:var(--accent)">${rw}</div><div class="yes-l">Moedas</div></div>
+    <div class="yes"><div class="yes-v" style="color:var(--blue)">${YGO.p.lp}</div><div class="yes-l">LP Rest.</div></div>
+    <div class="yes"><div class="yes-v" style="color:var(--primary)">${YGO.turn}</div><div class="yes-l">Turnos</div></div></div>
+    <button onclick="ygoCloseEnd(this)">Voltar</button>`;
   } else {
-    ov.innerHTML=`<h2 style="color:var(--red)">💀 DERROTA</h2><p>Seus LP chegaram a 0...</p><button onclick="ygoCloseEnd(this)">Voltar</button>`;
+    ov.innerHTML=`<h2 style="color:var(--red)">💀 DERROTA</h2><p>LP: 0</p>
+    <div class="ygo-end-stats"><div class="yes"><div class="yes-v" style="color:var(--red)">${YGO.b.lp}</div><div class="yes-l">LP Bot</div></div>
+    <div class="yes"><div class="yes-v" style="color:var(--primary)">${YGO.turn}</div><div class="yes-l">Turnos</div></div></div>
+    <button onclick="ygoCloseEnd(this)">Voltar</button>`;
   }
   document.getElementById('ygoArena').appendChild(ov);
 }
+function ygoCloseEnd(btn){btn.closest('.ygo-end-overlay').remove();document.getElementById('ygoArena').classList.remove('active');document.body.style.overflow='';YGO=null}
+function ygoFlee(){if(YGO){document.querySelectorAll('.ygo-end-overlay').forEach(e=>e.remove());document.getElementById('ygoArena').classList.remove('active');document.body.style.overflow='';YGO=null}}
 
-function ygoCloseEnd(btn){
-  btn.closest('.ygo-end-overlay').remove();
-  document.getElementById('ygoArena').classList.remove('active');
-  document.body.style.overflow='';
-  YGO=null;
-}
+function ygoAddLog(msg,cls=''){const log=document.getElementById('ygoLog');const line=document.createElement('div');line.className='ygo-log-line '+cls;line.textContent=msg;log.appendChild(line);requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight})}
 
-function ygoFlee(){
-  if(YGO){
-    document.querySelectorAll('.ygo-end-overlay').forEach(e=>e.remove());
-    document.getElementById('ygoArena').classList.remove('active');
-    document.body.style.overflow='';
-    YGO=null;
-  }
-}
-
-function ygoAddLog(msg,cls=''){
-  const log=document.getElementById('ygoLog');
-  const line=document.createElement('div');
-  line.className='ygo-log-line '+cls;
-  line.textContent=msg;
-  log.appendChild(line);
-  requestAnimationFrame(()=>{log.scrollTop=log.scrollHeight});
-}
-
-// INIT
 document.getElementById('coins').textContent=gs.coins;
 </script>
 </body>
